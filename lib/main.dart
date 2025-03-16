@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_app/views/onboarding_screens/onboarding.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:furniture_app/core/app_colors.dart';
+import 'package:furniture_app/core/sensetive_data.dart';
+import 'package:furniture_app/views/auth/UI/sign_in.dart';
+import 'package:furniture_app/views/auth/cubit/authentication_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
-  await Supabase.initialize(
-    url: 'https://wdgpfhefvzknfoeaxizj.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkZ3BmaGVmdnprbmZvZWF4aXpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxNTE4MDIsImV4cCI6MjA1NzcyNzgwMn0.KofLq38MhNTh5eI8ZCas6xcTVSM1ZIZTJZqZIm7WUM4',
-  );
-
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(url: url_supabase, anonKey: anonKey_supabase);
+  runApp(BlocProvider(
+    create: (context) => AuthenticationCubit(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -19,14 +21,41 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Flutter Demo',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          textTheme: GoogleFonts.poppinsTextTheme(),
-          scaffoldBackgroundColor: Colors.white,
-          useMaterial3: true,
-        ),
-        home: OnBoarding());
+    SupabaseClient client = Supabase.instance.client;
+    return BlocProvider(
+        create: (context) => AuthenticationCubit(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Our Market',
+          theme: ThemeData(
+            scaffoldBackgroundColor: AppColors.lightBeige,
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            useMaterial3: true,
+          ),
+          home: SignIn(),
+        ));
+  }
+}
+
+class MainHomeView extends StatefulWidget {
+  MainHomeView({super.key});
+  //final UserDataModel userDataModel;
+
+  @override
+  State<MainHomeView> createState() => _MainHomeViewState();
+}
+
+class _MainHomeViewState extends State<MainHomeView> {
+  late List<Widget> views;
+  @override
+  void initState() {
+    views = [];
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold();
   }
 }
