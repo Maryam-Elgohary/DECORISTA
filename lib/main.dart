@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:furniture_app/core/functions/my_observer.dart';
 import 'package:furniture_app/core/sensetive_data.dart';
 import 'package:furniture_app/views/auth/cubit/authentication_cubit.dart';
-import 'package:furniture_app/views/onboarding_screens/onboarding.dart';
+import 'package:furniture_app/views/navbar/UI/main_home_view.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
@@ -35,6 +35,6 @@ class MyApp extends StatelessWidget {
             ),
             home:
                 //client.auth.currentUser != null ? MainHomeView() :
-                const OnBoarding()));
+                MainHomeView()));
   }
 }

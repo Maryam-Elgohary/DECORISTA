@@ -58,7 +58,7 @@ class MainHomeView extends StatelessWidget {
                       ),
                       GButton(
                         icon: LineIcons.store,
-                        text: 'Store',
+                        text: 'Cart',
                       ),
                       GButton(
                         icon: LineIcons.heart,
