@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'authentication_state.dart';
@@ -24,6 +25,40 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     }
   }
 
+  GoogleSignInAccount? googleUser;
+  Future<AuthResponse> googleSignIn() async {
+    emit(GoogleSignInLoading());
+
+    const webClientId =
+        '648254806178-pcctv1v6ffmufi8bbbgjjlkqpvpoq5on.apps.googleusercontent.com';
+
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      //clientId: iosClientId,
+      serverClientId: webClientId,
+    );
+    googleUser = await googleSignIn.signIn();
+    if (googleUser == null) {
+      return AuthResponse();
+    }
+    final googleAuth = await googleUser!.authentication;
+    final accessToken = googleAuth.accessToken;
+    final idToken = googleAuth.idToken;
+
+    if (accessToken == null || idToken == null) {
+      emit(GoogleSignInError());
+      return AuthResponse();
+    }
+
+    AuthResponse response = await client.auth.signInWithIdToken(
+      provider: OAuthProvider.google,
+      idToken: idToken,
+      accessToken: accessToken,
+    );
+    log("Success");
+    emit(GoogleSignInSuccess());
+    return response;
+  }
+
   Future<void> register(
       {required String firstName,
       required String lastName,
@@ -31,7 +66,21 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       required String password}) async {
     emit(SignUpLoading());
     try {
-      await client.auth.signUp(password: password, email: email);
+      // Sign up the user and get the response
+      final authResponse = await client.auth.signUp(
+          password: password,
+          email: email,
+          data: {'full_name': firstName + ' ' + lastName});
+
+      // Get the user ID from the response
+      final userId = authResponse.user?.id;
+      if (userId == null) {
+        throw Exception("User ID is null after sign-up");
+      }
+
+      // Add user data using the userId
+      await addUserData(
+          userId: userId, name: firstName + " " + lastName, email: email);
       emit(SignUpSuccess());
     } on AuthException catch (e) {
       log(e.toString());
@@ -41,4 +90,33 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       emit(SignUpError(e.toString()));
     }
   }
+
+  Future<void> addUserData({
+    required String userId,
+    required String name,
+    required String email,
+  }) async {
+    emit(UserDataAddedLoading());
+    try {
+      await client
+          .from('users')
+          .insert({'id': userId, 'name': name, 'email': email});
+      emit(UserDataAddedSuccess());
+    } catch (e) {
+      log(e.toString());
+      emit(UserDataAddedError());
+    }
+  }
+
+
+   Future<void> resetPasswords({required String email}) async {
+     emit(PasswordResetLoading());
+     try {
+       await client.auth.resetPasswordForEmail(email);
+       emit(PasswordResetSuccess());
+     } catch (e) {
+       log(e.toString());
+       emit(PasswordResetError());
+     }
+   }
 }

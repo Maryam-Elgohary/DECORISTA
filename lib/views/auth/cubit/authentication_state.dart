@@ -22,3 +22,21 @@ final class SignUpError extends AuthenticationState {
   final String message;
   SignUpError(this.message);
 }
+
+final class GoogleSignInSuccess extends AuthenticationState {}
+
+final class GoogleSignInLoading extends AuthenticationState {}
+
+final class GoogleSignInError extends AuthenticationState {}
+
+final class UserDataAddedLoading extends AuthenticationState {}
+
+final class UserDataAddedSuccess extends AuthenticationState {}
+
+final class UserDataAddedError extends AuthenticationState {}
+
+ final class PasswordResetLoading extends AuthenticationState {}
+ 
+ final class PasswordResetSuccess extends AuthenticationState {}
+ 
+ final class PasswordResetError extends AuthenticationState {}
