@@ -3,17 +3,16 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
 import 'package:furniture_app/core/functions/navigate_to.dart';
-import 'package:furniture_app/views/auth/UI/forget_password.dart';
-import 'package:furniture_app/views/auth/UI/sign_up.dart';
+import 'package:furniture_app/views/auth/UI/sign_in.dart';
 
-class SignIn extends StatefulWidget {
-  const SignIn({super.key});
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
 
   @override
-  State<SignIn> createState() => _SignInState();
+  State<SignUp> createState() => _SignUpState();
 }
 
-class _SignInState extends State<SignIn> {
+class _SignUpState extends State<SignUp> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -23,6 +22,13 @@ class _SignInState extends State<SignIn> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
+          leading: IconButton(
+              style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(Color(0xfff4f4f4))),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back)),
         ),
         body: Padding(
           padding: EdgeInsets.only(
@@ -35,7 +41,7 @@ class _SignInState extends State<SignIn> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Sign in",
+                  "Create Account",
                   style: TextStyle(
                       color: AppColors.darkBrown,
                       fontSize: pxToSp(context, 32),
@@ -54,14 +60,53 @@ class _SignInState extends State<SignIn> {
                   controller: emailController,
                   decoration: InputDecoration(
                       filled: true,
+                      labelText: "First Name",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: BorderSide.none),
+                      fillColor: const Color(0xfff4f4f4)),
+                  keyboardType: TextInputType.name,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "This field is required";
+                    }
+                    return null;
+                  },
+                  controller: emailController,
+                  decoration: InputDecoration(
+                      filled: true,
+                      labelText: "Last Name",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: BorderSide.none),
+                      fillColor: const Color(0xfff4f4f4)),
+                  keyboardType: TextInputType.name,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "This field is required";
+                    }
+                    return null;
+                  },
+                  controller: emailController,
+                  decoration: InputDecoration(
+                      filled: true,
                       labelText: "Email Address",
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5),
                           borderSide: BorderSide.none),
-                      fillColor: Color(0xfff4f4f4)),
+                      fillColor: const Color(0xfff4f4f4)),
                   keyboardType: TextInputType.emailAddress,
                 ),
-
                 const SizedBox(
                   height: 20,
                 ),
@@ -79,7 +124,7 @@ class _SignInState extends State<SignIn> {
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
                         borderSide: BorderSide.none),
-                    fillColor: Color(0xfff4f4f4),
+                    fillColor: const Color(0xfff4f4f4),
                     suffixIcon: IconButton(
                       onPressed: () {
                         setState(() {
@@ -97,37 +142,12 @@ class _SignInState extends State<SignIn> {
                   keyboardType: TextInputType.visiblePassword,
                   obscureText: isPasswordHidden,
                 ),
-
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      naviagteTo(context, ForgetPassword());
-                    },
-                    child: RichText(
-                        text: TextSpan(children: [
-                      TextSpan(
-                          text: "Forgot password?",
-                          style: TextStyle(
-                              color: AppColors.darkBrown,
-                              fontSize: pxToSp(context, 16),
-                              fontWeight: FontWeight.w500)),
-                      TextSpan(
-                        text: " Reset",
-                        style: TextStyle(
-                            color: AppColors.darkBrown,
-                            fontSize: pxToSp(context, 16),
-                            fontWeight: FontWeight.w700),
-                      )
-                    ])),
-                  ),
-                ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.darkBrown,
-                      minimumSize: Size(double.infinity, 50)),
+                      minimumSize: const Size(double.infinity, 50)),
                   child: Text(
                     "Continue",
                     style: TextStyle(
@@ -136,10 +156,10 @@ class _SignInState extends State<SignIn> {
                         fontWeight: FontWeight.w500),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 15),
                 ElevatedButton.icon(
                   onPressed: () {},
-                  icon: FaIcon(
+                  icon: const FaIcon(
                     FontAwesomeIcons.google,
                     size: 25,
                     color: Colors.red,
@@ -155,25 +175,24 @@ class _SignInState extends State<SignIn> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xfff4f4f4),
-                      minimumSize: Size(double.infinity, 50)),
+                      backgroundColor: const Color(0xfff4f4f4),
+                      minimumSize: const Size(double.infinity, 50)),
                 ),
-
-                //  Spacer(),
                 Center(
                   child: TextButton(
-                    onPressed: () => Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SignUp())),
+                    onPressed: () {
+                      naviagteTo(context, SignIn());
+                    },
                     child: RichText(
                         text: TextSpan(children: [
                       TextSpan(
-                          text: "Don't have an account? ",
+                          text: "Already have an account? ",
                           style: TextStyle(
-                              color: AppColors.darkBrown,
+                              color: Color(0xff828A89),
                               fontSize: pxToSp(context, 16),
                               fontWeight: FontWeight.w500)),
                       TextSpan(
-                        text: "Create one",
+                        text: "Sign in",
                         style: TextStyle(
                             color: AppColors.darkBrown,
                             fontSize: pxToSp(context, 16),
