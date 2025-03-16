@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
+import 'package:furniture_app/core/functions/navigate_without_back.dart';
+import 'package:furniture_app/views/auth/UI/sign_in.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -103,8 +105,7 @@ class _OnBoardingState extends State<OnBoarding> {
             child: currentIndex == onboardingData.length - 1
                 ? ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      minimumSize:
-                          Size(double.infinity - 33, pxToSp(context, 45)),
+                      minimumSize: Size(double.infinity, 50),
                       backgroundColor: AppColors.darkBrown,
                       shape: RoundedRectangleBorder(
                         borderRadius:
@@ -113,7 +114,7 @@ class _OnBoardingState extends State<OnBoarding> {
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                     onPressed: () {
-                      //Todo: Navigate to the next screen
+                      navigateWithoutBack(context, SignIn());
                     },
                     child: Text(
                       "Get Started",
