@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/components/products_list.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
+import 'package:furniture_app/core/functions/navigate_to.dart';
+import 'package:furniture_app/views/categories/UI/categories_screen.dart';
 import 'package:furniture_app/views/home/UI/widgets/categories_list.dart';
+import 'package:furniture_app/views/home/UI/widgets/discount_banner.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -55,6 +58,10 @@ class HomeView extends StatelessWidget {
                       color: AppColors.darkBrown,
                       fontWeight: FontWeight.w600,
                       fontSize: pxToSp(context, 16))),
+              const SizedBox(
+                height: 10,
+              ),
+              DiscountBanner(),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -67,14 +74,19 @@ class HomeView extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Text(
-                    "See All",
-                    style: TextStyle(
-                      color: AppColors.darkBrown,
-                      fontSize: pxToSp(context, 16),
-                      fontWeight: FontWeight.w500,
+                  TextButton(
+                    onPressed: () {
+                      naviagteTo(context, CategoriesScreen());
+                    },
+                    child: Text(
+                      "See All",
+                      style: TextStyle(
+                        color: AppColors.darkBrown,
+                        fontSize: pxToSp(context, 16),
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
+                  )
                 ],
               ),
               const SizedBox(height: 10),

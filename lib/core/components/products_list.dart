@@ -29,6 +29,10 @@ class ProductsList extends StatelessWidget {
     },
   ];
 
+  ProductsList({
+    super.key,
+  });
+
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
