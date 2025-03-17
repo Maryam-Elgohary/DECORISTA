@@ -44,7 +44,7 @@ class MainHomeView extends StatelessWidget {
                     duration:
                         Duration(milliseconds: 400), // tab animation duration
                     gap: 8, // the tab button gap between icon and text
-                    color: AppColors.lightBeige, // unselected icon color
+                    color: AppColors.lightBrown, // unselected icon color
                     activeColor: Colors.white, // selected icon and text color
                     iconSize: 28, // tab button icon size
                     tabBackgroundColor:

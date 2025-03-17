@@ -31,7 +31,7 @@ class _CategoriesListState extends State<CategoriesList> {
               padding: const EdgeInsets.all(8.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.darkBrown : Colors.transparent,
+                  color: isSelected ? AppColors.darkBrown : Colors.white,
                   borderRadius: BorderRadius.circular(50),
                 ),
                 alignment: Alignment.center,
