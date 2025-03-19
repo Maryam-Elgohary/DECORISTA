@@ -6,28 +6,29 @@ import 'package:furniture_app/core/components/products_card.dart';
 import 'package:furniture_app/core/models/product_model.dart';
 
 class ProductsList extends StatelessWidget {
-  const ProductsList({
-    super.key,
-    this.shrinkWrap,
-    this.physics,
-    this.query,
-    this.category,
-  });
+  const ProductsList(
+      {super.key,
+      this.shrinkWrap,
+      this.physics,
+      this.query,
+      this.category,
+      this.isFavoriteView = false});
 
   final bool? shrinkWrap;
   final ScrollPhysics? physics;
   final String? query;
   final String? category; // Ensuring category is required to avoid null errors
-
+  final bool isFavoriteView;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
           HomeCubit()..getProducts(query: query, category: category),
-      child: BlocBuilder<HomeCubit, HomeState>(
+      child: BlocConsumer<HomeCubit, HomeState>(
+        listener: (BuildContext context, HomeState state) {},
         builder: (context, state) {
-          final homeCubit =
-              context.read<HomeCubit>(); // Use read for performance
+          HomeCubit homeCubit = context.watch<HomeCubit>();
+
           List<Products> products = homeCubit.products;
 
           // Apply category filtering
@@ -44,6 +45,11 @@ class ProductsList extends StatelessWidget {
                 .toList();
           }
 
+          if (isFavoriteView) {
+            products = products
+                .where((p) => p.favoriteTable.any((f) => f.isFavorite))
+                .toList();
+          }
           if (state is GetDataLoading) {
             return const Center(child: CustomCircleProIndicator());
           }
@@ -68,7 +74,19 @@ class ProductsList extends StatelessWidget {
               childAspectRatio: 0.6,
             ),
             itemBuilder: (context, index) {
-              return ProductsCard(product: products[index]);
+              return ProductsCard(
+                product: products[index],
+                onTap: () {
+                  homeCubit.addToFavorite(products[index].productId!);
+                  bool isFavorite =
+                      homeCubit.checkIsFavorite(products[index].productId!);
+                  isFavorite
+                      ? homeCubit.removeFavorite(products[index].productId!)
+                      : homeCubit.addToFavorite(products[index].productId!);
+                },
+                isFavorite:
+                    homeCubit.checkIsFavorite(products[index].productId!),
+              );
             },
           );
         },

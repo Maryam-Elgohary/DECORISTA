@@ -6,12 +6,13 @@ import 'package:furniture_app/views/favorite/UI/favorite_view.dart';
 import 'package:furniture_app/views/home/UI/home_view.dart';
 import 'package:furniture_app/views/navbar/cubit/cubit/nav_bar_cubit.dart';
 import 'package:furniture_app/views/profile/UI/profile_view.dart';
+import 'package:furniture_app/views/profile/logic/models/userdata_model.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 
 class MainHomeView extends StatelessWidget {
-  MainHomeView({super.key});
-
+  MainHomeView({super.key, required this.userDataModel});
+  final UserDataModel userDataModel;
   final List<Widget> views = [
     HomeView(),
     CartView(),

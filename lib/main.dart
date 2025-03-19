@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
 import 'package:furniture_app/core/functions/my_observer.dart';
 import 'package:furniture_app/core/sensetive_data.dart';
+import 'package:furniture_app/views/auth/UI/sign_in.dart';
 import 'package:furniture_app/views/auth/cubit/authentication_cubit.dart';
+import 'package:furniture_app/views/auth/cubit/authentication_state.dart';
 import 'package:furniture_app/views/navbar/UI/main_home_view.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(url: url_supabase, anonKey: anonKey_supabase);
+
+  await Supabase.initialize(
+    url: '$url_supabase',
+    anonKey: anonKey_supabase,
+  );
   Bloc.observer = MyObserver();
+
   runApp(BlocProvider(
-    create: (context) => AuthenticationCubit(),
+    create: (context) => AuthenticationCubit()..getUserData(),
     child: const MyApp(),
   ));
 }
@@ -23,18 +31,29 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SupabaseClient client = Supabase.instance.client;
-    return BlocProvider(
-        create: (context) => AuthenticationCubit()..getUserData(),
-        child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Decorista',
-            theme: ThemeData(
-              scaffoldBackgroundColor: Colors.white,
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-              useMaterial3: true,
-            ),
-            home:
-                //client.auth.currentUser != null ? MainHomeView() :
-                MainHomeView()));
+    return BlocBuilder<AuthenticationCubit, AuthenticationState>(
+      builder: (context, state) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Decorista',
+          theme: ThemeData(
+            scaffoldBackgroundColor: Color(0xfff4f4f4),
+            useMaterial3: true,
+          ),
+          home: client.auth.currentUser != null
+              ? state is GetUserDataLoading
+                  ? const Scaffold(
+                      body: Center(
+                        child: CustomCircleProIndicator(),
+                      ),
+                    )
+                  : MainHomeView(
+                      userDataModel:
+                          context.read<AuthenticationCubit>().userDataModel!,
+                    )
+              : const SignIn(),
+        );
+      },
+    );
   }
 }

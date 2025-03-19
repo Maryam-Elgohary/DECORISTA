@@ -8,11 +8,11 @@ import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
 import 'package:furniture_app/core/functions/navigate_to.dart';
 import 'package:furniture_app/core/functions/show_msg.dart';
-import 'package:furniture_app/main.dart';
 import 'package:furniture_app/views/auth/UI/sign_in.dart';
 import 'package:furniture_app/views/auth/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/auth/cubit/authentication_state.dart';
 import 'package:furniture_app/views/navbar/UI/main_home_view.dart';
+import 'package:furniture_app/views/profile/logic/models/userdata_model.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -33,8 +33,14 @@ class _SignUpState extends State<SignUp> {
     return BlocConsumer<AuthenticationCubit, AuthenticationState>(
       listener: (context, state) {
         if (state is SignUpSuccess || state is GoogleSignInSuccess) {
+          UserDataModel userDataModel =
+              context.read<AuthenticationCubit>().userDataModel!;
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => MainHomeView()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MainHomeView(
+                        userDataModel: userDataModel,
+                      )));
           log("Success");
         }
         if (state is SignUpError) {

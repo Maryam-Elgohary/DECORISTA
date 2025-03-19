@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:furniture_app/core/components/products_list.dart';
 import 'package:furniture_app/core/functions/build_appbar.dart';
 
 class FavoriteView extends StatelessWidget {
@@ -9,8 +10,9 @@ class FavoriteView extends StatelessWidget {
     return Scaffold(
         appBar: buildCustomAppBar(context, "Favorites"),
         body: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Container(),
-        ));
+            padding: const EdgeInsets.all(10.0),
+            child: ProductsList(
+              isFavoriteView: true,
+            )));
   }
 }

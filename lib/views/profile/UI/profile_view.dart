@@ -14,7 +14,11 @@ class ProfileView extends StatelessWidget {
     return BlocProvider(
       create: (context) => AuthenticationCubit()..getUserData(),
       child: BlocConsumer<AuthenticationCubit, AuthenticationState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          // if (state is LogoutSuccess) {
+          //   navigateWithoutBack(context, const LoginView());
+          // }
+        },
         builder: (context, state) {
           UserDataModel? user =
               context.read<AuthenticationCubit>().userDataModel;
@@ -35,7 +39,7 @@ class ProfileView extends StatelessWidget {
                               const CircleAvatar(
                                 radius: 55,
                                 backgroundColor: AppColors.darkBrown,
-                                foregroundColor: Colors.white,
+                                // foregroundColor: AppColors.kWhiteColor,
                                 child: Icon(
                                   Icons.person,
                                   size: 40,
@@ -48,6 +52,7 @@ class ProfileView extends StatelessWidget {
                               ),
                               const SizedBox(height: 10),
                               Text(user?.email ?? "email"),
+                              const SizedBox(height: 10),
                             ],
                           )),
                     ),

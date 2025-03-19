@@ -42,7 +42,6 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         '648254806178-pcctv1v6ffmufi8bbbgjjlkqpvpoq5on.apps.googleusercontent.com';
 
     final GoogleSignIn googleSignIn = GoogleSignIn(
-      //clientId: iosClientId,
       serverClientId: webClientId,
     );
     googleUser = await googleSignIn.signIn();
@@ -63,7 +62,15 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       idToken: idToken,
       accessToken: accessToken,
     );
-    log("Success");
+    final userId = response.user?.id;
+    if (userId == null) {
+      throw Exception("User ID is null after sign-up");
+    }
+    await addUserData(
+        userId: userId,
+        name: googleUser?.displayName ?? 'Unknown',
+        email: googleUser?.email ?? 'No email');
+
     await getUserData();
     emit(GoogleSignInSuccess());
     return response;
@@ -80,7 +87,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       final authResponse = await client.auth.signUp(
           password: password,
           email: email,
-          data: {'full_name': firstName + ' ' + lastName});
+          data: {'full_name': firstName + " " + lastName});
 
       // Get the user ID from the response
       final userId = authResponse.user?.id;
@@ -111,7 +118,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     try {
       await client
           .from('users')
-          .insert({'user_id': userId, 'name': name, 'email': email});
+          .upsert({'user_id': userId, 'name': name, 'email': email});
       emit(UserDataAddedSuccess());
     } catch (e) {
       log(e.toString());

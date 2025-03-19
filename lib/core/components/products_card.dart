@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
-import 'package:furniture_app/core/models/favorite_products.dart';
 import 'package:furniture_app/core/models/product_model.dart';
 
 class ProductsCard extends StatefulWidget {
-  const ProductsCard({super.key, required this.product});
+  const ProductsCard(
+      {super.key, required this.product, this.onTap, required this.isFavorite});
 
   final Products product;
-
+  final Function()? onTap;
+  final bool isFavorite;
   @override
   _ProductsCardState createState() => _ProductsCardState();
 }
 
 class _ProductsCardState extends State<ProductsCard> {
-  late bool _isFavorite;
+  //late bool _isFavorite;
 
-  @override
-  void initState() {
-    super.initState();
-    _isFavorite = widget.product.favoriteTable
-        .cast<FavoriteTable>()
-        .any((fav) => fav.isFavorite);
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _isFavorite = widget.product.favoriteTable
+  //       .cast<FavoriteTable>()
+  //       .any((fav) => fav.isFavorite);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -58,14 +59,12 @@ class _ProductsCardState extends State<ProductsCard> {
                   top: 10,
                   right: 10,
                   child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isFavorite = !_isFavorite;
-                      });
-                    },
+                    onTap: widget.onTap,
                     child: Icon(
-                      _isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: _isFavorite ? Colors.red : Colors.grey,
+                      widget.isFavorite
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: widget.isFavorite ? Colors.red : Colors.grey,
                       size: iconSize,
                     ),
                   ),

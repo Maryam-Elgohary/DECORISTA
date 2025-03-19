@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,6 +11,7 @@ import 'package:furniture_app/views/auth/UI/sign_up.dart';
 import 'package:furniture_app/views/auth/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/auth/cubit/authentication_state.dart';
 import 'package:furniture_app/views/navbar/UI/main_home_view.dart';
+import 'package:furniture_app/views/profile/logic/models/userdata_model.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -31,10 +30,13 @@ class _SignInState extends State<SignIn> {
     return BlocConsumer<AuthenticationCubit, AuthenticationState>(
       listener: (context, state) {
         if (state is LoginSuccess || state is GoogleSignInSuccess) {
+          UserDataModel userDataModel =
+              context.read<AuthenticationCubit>().userDataModel!;
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => MainHomeView()));
-
-          log("Success");
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      MainHomeView(userDataModel: userDataModel)));
         }
         if (state is LoginError) {
           showMsg(context, state.message);
@@ -172,7 +174,6 @@ class _SignInState extends State<SignIn> {
                             ElevatedButton.icon(
                               onPressed: () {
                                 cubit.googleSignIn();
-                                naviagteTo(context, MainHomeView());
                               },
                               icon: FaIcon(
                                 FontAwesomeIcons.google,
