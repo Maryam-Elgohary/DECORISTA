@@ -14,11 +14,11 @@ class _SelectedCategoryState extends State<SelectedCategory> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: buildCustomAppBar(context, widget.title),
-        body: widget.title == "Chair"
-            ? Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: ProductsList(),
-              )
-            : Container());
+        body: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: ProductsList(
+            category: widget.title,
+          ),
+        ));
   }
 }

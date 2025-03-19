@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
-import 'package:furniture_app/core/components/products_list.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
 import 'package:furniture_app/core/functions/navigate_to.dart';
 import 'package:furniture_app/views/categories/UI/categories_screen.dart';
 import 'package:furniture_app/views/home/UI/widgets/categories_list.dart';
 import 'package:furniture_app/views/home/UI/widgets/discount_banner.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,12 +94,7 @@ class HomeView extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 10),
-              const CategoriesList(),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 500, // Adjust this height as needed
-                child: ProductsList(),
-              ),
+              CategoriesList(),
             ],
           ),
         ),

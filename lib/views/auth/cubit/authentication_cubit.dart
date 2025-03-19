@@ -110,7 +110,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     emit(UserDataAddedLoading());
     try {
       await client
-          .from('customers')
+          .from('users')
           .insert({'user_id': userId, 'name': name, 'email': email});
       emit(UserDataAddedSuccess());
     } catch (e) {
@@ -124,8 +124,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     emit(GetUserDataLoading());
     try {
       final userId = client.auth.currentUser!.id;
-      final data =
-          await client.from("customers").select().eq('user_id', userId);
+      final data = await client.from("users").select().eq('user_id', userId);
       log(data.toString());
       if (data.isNotEmpty) {
         userDataModel = UserDataModel(
