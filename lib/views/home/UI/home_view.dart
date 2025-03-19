@@ -4,6 +4,7 @@ import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
 import 'package:furniture_app/core/functions/navigate_to.dart';
 import 'package:furniture_app/views/categories/UI/categories_screen.dart';
 import 'package:furniture_app/views/home/UI/widgets/categories_list.dart';
+import 'package:furniture_app/views/home/UI/widgets/custom_search_field.dart';
 import 'package:furniture_app/views/home/UI/widgets/discount_banner.dart';
 
 class HomeView extends StatefulWidget {
@@ -42,21 +43,8 @@ class _HomeViewState extends State<HomeView> {
                 ],
               ),
               const SizedBox(height: 10),
-              TextFormField(
-                decoration: InputDecoration(
-                  filled: true,
-                  hintText: "Search",
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(pxToSp(context, 100)),
-                    borderSide: BorderSide.none,
-                  ),
-                  fillColor: const Color.fromRGBO(167, 167, 167, 0.20),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
+              CustomSearchField(),
+              const SizedBox(height: 10),
               Text("Special Offers",
                   style: TextStyle(
                       color: AppColors.darkBrown,

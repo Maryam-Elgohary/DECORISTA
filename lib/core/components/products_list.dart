@@ -31,9 +31,18 @@ class ProductsList extends StatelessWidget {
           List<Products> products = homeCubit.products;
 
           // Apply category filtering
-          products = products
-              .where((p) => p.categoryTable.categoryName == category)
-              .toList();
+          if (query != null) {
+            products = products
+                .where((p) => p.productName.toLowerCase().contains(
+                        query!.toLowerCase()) // Case-insensitive search
+                    )
+                .toList();
+          }
+          if (category != null) {
+            products = products
+                .where((p) => p.categoryTable.categoryName == category)
+                .toList();
+          }
 
           if (state is GetDataLoading) {
             return const Center(child: CustomCircleProIndicator());
