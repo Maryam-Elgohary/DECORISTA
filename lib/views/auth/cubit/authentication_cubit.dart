@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:furniture_app/views/profile/logic/models/userdata_model.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -14,8 +15,16 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   Future<void> login({required String email, required String password}) async {
     emit(LoginLoading());
     try {
-      await client.auth.signInWithPassword(password: password, email: email);
-      emit(LoginSuccess());
+      final result = await client.auth
+          .signInWithPassword(password: password, email: email);
+      if (result.user != null) {
+        // User is signed in, now fetch their data
+        await getUserData();
+        emit(LoginSuccess());
+      } else {
+        log("Login failed: no user returned.");
+        emit(LoginError("Login failed"));
+      }
     } on AuthException catch (e) {
       log(e.toString());
       emit(LoginError(e.message));
@@ -55,6 +64,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       accessToken: accessToken,
     );
     log("Success");
+    await getUserData();
     emit(GoogleSignInSuccess());
     return response;
   }
@@ -81,6 +91,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       // Add user data using the userId
       await addUserData(
           userId: userId, name: firstName + " " + lastName, email: email);
+      await getUserData();
       emit(SignUpSuccess());
     } on AuthException catch (e) {
       log(e.toString());
@@ -99,8 +110,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     emit(UserDataAddedLoading());
     try {
       await client
-          .from('users')
-          .insert({'id': userId, 'name': name, 'email': email});
+          .from('customers')
+          .insert({'user_id': userId, 'name': name, 'email': email});
       emit(UserDataAddedSuccess());
     } catch (e) {
       log(e.toString());
@@ -108,15 +119,37 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     }
   }
 
+  UserDataModel? userDataModel;
+  Future<void> getUserData() async {
+    emit(GetUserDataLoading());
+    try {
+      final userId = client.auth.currentUser!.id;
+      final data =
+          await client.from("customers").select().eq('user_id', userId);
+      log(data.toString());
+      if (data.isNotEmpty) {
+        userDataModel = UserDataModel(
+          email: data[0]['email'],
+          firstName: data[0]['name'].split(' ')[0],
+          lastName: data[0]['name'].split(' ')[1],
+          userId: data[0]['user_id'],
+        );
+        emit(GetUserDataSuccess());
+      }
+    } catch (e) {
+      log(e.toString());
+      emit(GetUserDataError());
+    }
+  }
 
-   Future<void> resetPasswords({required String email}) async {
-     emit(PasswordResetLoading());
-     try {
-       await client.auth.resetPasswordForEmail(email);
-       emit(PasswordResetSuccess());
-     } catch (e) {
-       log(e.toString());
-       emit(PasswordResetError());
-     }
-   }
+  Future<void> resetPasswords({required String email}) async {
+    emit(PasswordResetLoading());
+    try {
+      await client.auth.resetPasswordForEmail(email);
+      emit(PasswordResetSuccess());
+    } catch (e) {
+      log(e.toString());
+      emit(PasswordResetError());
+    }
+  }
 }

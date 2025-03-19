@@ -3,7 +3,7 @@ import 'package:furniture_app/core/sensetive_data.dart';
 
 class ApiServices {
   final Dio _dio = Dio(BaseOptions(
-      baseUrl: "https://$url_supabase/rest/v1",
+      baseUrl: "https://wdgpfhefvzknfoeaxizj.supabase.co/rest/v1/",
       headers: {
         "apikey": anonKey_supabase,
         "Authorizaion": authorization_anonKey

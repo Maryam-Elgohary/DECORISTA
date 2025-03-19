@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
+import 'package:furniture_app/core/models/favorite_products.dart';
+import 'package:furniture_app/core/models/product_model.dart';
 
 class ProductsCard extends StatefulWidget {
-  final String name;
-  final double price;
-  final String image;
-  final bool isFavorite;
-
-  const ProductsCard({
-    required this.name,
-    required this.price,
-    required this.image,
-    required this.isFavorite,
-  });
-
+  ProductsCard({super.key, required this.product});
+  final Products product;
   @override
   _ProductsCardState createState() => _ProductsCardState();
 }
@@ -24,7 +16,9 @@ class _ProductsCardState extends State<ProductsCard> {
   @override
   void initState() {
     super.initState();
-    _isFavorite = widget.isFavorite;
+    _isFavorite = widget.product.favoriteTable
+        .cast<FavoriteTable>() // Ensures the list is properly typed
+        .any((fav) => fav.isFavorite);
   }
 
   @override
@@ -42,8 +36,11 @@ class _ProductsCardState extends State<ProductsCard> {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Image.asset(
-                    widget.image,
+                  child: Image.network(
+                    // Use network image instead of asset
+                    widget.product.productImageTable.isNotEmpty
+                        ? widget.product.productImageTable.first.imageUrl
+                        : 'https://via.placeholder.com/150', // Placeholder if no image
                     height: 190,
                     width: double.infinity,
                     fit: BoxFit.fill,
@@ -72,18 +69,24 @@ class _ProductsCardState extends State<ProductsCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.name,
-                  style: TextStyle(
+                SizedBox(
+                  height: 40,
+                  child: Text(
+                    widget.product.productName,
+                    style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
-                      color: AppColors.darkBrown),
+                      color: AppColors.darkBrown,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "\$${widget.price}",
+                      "\$${widget.product.price}", // Fixed property access
                       style: TextStyle(
                           fontSize: 16,
                           color: AppColors.orangeColor,
@@ -101,8 +104,9 @@ class _ProductsCardState extends State<ProductsCard> {
                           Icons.arrow_forward_rounded,
                           size: 27,
                         ),
-                        padding: EdgeInsets.zero, // Removes extra padding
-                        constraints: BoxConstraints(),
+                        padding: EdgeInsets.zero,
+                        constraints: BoxConstraints(
+                            minWidth: 35, minHeight: 35), // Ensures proper size
                       ),
                     ),
                   ],
