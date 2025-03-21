@@ -77,6 +77,7 @@ class HomeCubit extends Cubit<HomeState> {
       favoriteProducts.addAll({productId: true});
 
       emit(AddToFavoriteSuccess());
+      emit(FavoriteUpdated());
     } catch (e) {
       log(e.toString());
       emit(AddToFavoriteError());
@@ -97,6 +98,7 @@ class HomeCubit extends Cubit<HomeState> {
       await getProducts();
       favoriteProducts.removeWhere((key, value) => key == productId);
       emit(RemoveFromFavoriteSuccess());
+      emit(FavoriteUpdated());
     } catch (e) {
       log(e.toString());
       emit(RemoveFromFavoriteError());

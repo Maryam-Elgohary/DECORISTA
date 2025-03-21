@@ -106,7 +106,11 @@ class _ProductsCardState extends State<ProductsCard> {
                   child: IconButton(
                     onPressed: () {
                       naviagteTo(
-                          context, ProductDetails(product: widget.product));
+                          context,
+                          ProductDetails(
+                            product: widget.product,
+                            isFav: widget.isFavorite,
+                          ));
                     },
                     icon: Icon(
                       Icons.arrow_forward_rounded,

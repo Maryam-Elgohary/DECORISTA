@@ -22,3 +22,5 @@ final class RemoveFromFavoriteLoading extends HomeState {}
 final class RemoveFromFavoriteSuccess extends HomeState {}
 
 final class RemoveFromFavoriteError extends HomeState {}
+
+final class FavoriteUpdated extends HomeState {}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:furniture_app/core/components/cubit/cubit/home_cubit.dart';
 import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
 import 'package:furniture_app/core/functions/my_observer.dart';
 import 'package:furniture_app/core/sensetive_data.dart';
@@ -18,8 +19,15 @@ void main() async {
   );
   Bloc.observer = MyObserver();
 
-  runApp(BlocProvider(
-    create: (context) => AuthenticationCubit()..getUserData(),
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider(
+        create: (context) => AuthenticationCubit()..getUserData(),
+      ),
+      BlocProvider(
+        create: (context) => HomeCubit(),
+      )
+    ],
     child: MyApp(),
   ));
 }

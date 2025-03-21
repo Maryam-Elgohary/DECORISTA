@@ -16,7 +16,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
 
   List<Rate> rates = []; //rate ==> int
   int averageRate = 0;
-  int userRate = 5;
+  int userRate = 0;
   Future<void> getRates({required String productId}) async {
     emit(GetRateLoading());
     try {
@@ -84,6 +84,16 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     } catch (e) {
       log(e.toString());
       emit(AddOrUpdateRateError());
+    }
+  }
+
+  Future<void> addComment({required Map<String, dynamic> data}) async {
+    emit(AddCommentLoading());
+    await _apiServices.postData("review_table", data);
+    emit(AddCommentSuccess());
+    try {} catch (e) {
+      log(e.toString());
+      emit(AddCommentError());
     }
   }
 }
