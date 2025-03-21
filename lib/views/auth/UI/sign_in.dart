@@ -49,7 +49,7 @@ class _SignInState extends State<SignIn> {
               backgroundColor: Colors.transparent,
             ),
             body: state is LoginLoading
-                ? CustomCircleProIndicator()
+                ? const CustomCircleProIndicator()
                 : Padding(
                     padding: EdgeInsets.only(
                       left: pxToSp(context, 24),
@@ -69,7 +69,7 @@ class _SignInState extends State<SignIn> {
                                   fontSize: pxToSp(context, 32),
                                   fontWeight: FontWeight.w700),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
                             TextFormField(
@@ -86,7 +86,7 @@ class _SignInState extends State<SignIn> {
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5),
                                       borderSide: BorderSide.none),
-                                  fillColor: Color(0xfff4f4f4)),
+                                  fillColor: const Color(0xfff4f4f4)),
                               keyboardType: TextInputType.emailAddress,
                             ),
 
@@ -107,7 +107,7 @@ class _SignInState extends State<SignIn> {
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(5),
                                     borderSide: BorderSide.none),
-                                fillColor: Color(0xfff4f4f4),
+                                fillColor: const Color(0xfff4f4f4),
                                 suffixIcon: IconButton(
                                   onPressed: () {
                                     setState(() {
@@ -130,7 +130,7 @@ class _SignInState extends State<SignIn> {
                               alignment: Alignment.centerRight,
                               child: TextButton(
                                 onPressed: () {
-                                  naviagteTo(context, ForgetPassword());
+                                  naviagteTo(context, const ForgetPassword());
                                 },
                                 child: RichText(
                                     text: TextSpan(children: [
@@ -150,7 +150,7 @@ class _SignInState extends State<SignIn> {
                                 ])),
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             ElevatedButton(
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
@@ -161,7 +161,7 @@ class _SignInState extends State<SignIn> {
                               },
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.darkBrown,
-                                  minimumSize: Size(double.infinity, 50)),
+                                  minimumSize: const Size(double.infinity, 50)),
                               child: Text(
                                 "Continue",
                                 style: TextStyle(
@@ -170,12 +170,12 @@ class _SignInState extends State<SignIn> {
                                     fontWeight: FontWeight.w500),
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             ElevatedButton.icon(
                               onPressed: () {
                                 cubit.googleSignIn();
                               },
-                              icon: FaIcon(
+                              icon: const FaIcon(
                                 FontAwesomeIcons.google,
                                 size: 25,
                                 color: Colors.red,
@@ -191,8 +191,8 @@ class _SignInState extends State<SignIn> {
                                 ),
                               ),
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xfff4f4f4),
-                                  minimumSize: Size(double.infinity, 50)),
+                                  backgroundColor: const Color(0xfff4f4f4),
+                                  minimumSize: const Size(double.infinity, 50)),
                             ),
 
                             //  Spacer(),
@@ -201,7 +201,7 @@ class _SignInState extends State<SignIn> {
                                 onPressed: () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => SignUp())),
+                                        builder: (context) => const SignUp())),
                                 child: RichText(
                                     text: TextSpan(children: [
                                   TextSpan(

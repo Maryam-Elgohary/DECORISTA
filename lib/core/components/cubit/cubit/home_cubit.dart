@@ -111,7 +111,7 @@ class HomeCubit extends Cubit<HomeState> {
         for (FavoriteTable favoriteProduct in product.favoriteTable!) {
           if (favoriteProduct.customerId == userId) {
             favoriteProductList.add(product);
-            favoriteProducts.addAll({product.productId!: true});
+            favoriteProducts.addAll({product.productId: true});
           }
         }
       }

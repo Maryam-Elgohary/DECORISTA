@@ -75,17 +75,16 @@ class ProductsList extends StatelessWidget {
             ),
             itemBuilder: (context, index) {
               return ProductsCard(
+                isFavorite:
+                    homeCubit.checkIsFavorite(products[index].productId!),
                 product: products[index],
                 onTap: () {
-                  homeCubit.addToFavorite(products[index].productId!);
                   bool isFavorite =
                       homeCubit.checkIsFavorite(products[index].productId!);
                   isFavorite
                       ? homeCubit.removeFavorite(products[index].productId!)
                       : homeCubit.addToFavorite(products[index].productId!);
                 },
-                isFavorite:
-                    homeCubit.checkIsFavorite(products[index].productId!),
               );
             },
           );

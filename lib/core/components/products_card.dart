@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
+import 'package:furniture_app/core/functions/navigate_to.dart';
 import 'package:furniture_app/core/models/product_model.dart';
+import 'package:furniture_app/views/products/UI/product_details.dart';
 
 class ProductsCard extends StatefulWidget {
   const ProductsCard(
@@ -102,7 +104,10 @@ class _ProductsCardState extends State<ProductsCard> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      naviagteTo(
+                          context, ProductDetails(product: widget.product));
+                    },
                     icon: Icon(
                       Icons.arrow_forward_rounded,
                       size: iconSize,

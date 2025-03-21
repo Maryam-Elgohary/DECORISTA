@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
+import 'package:furniture_app/core/functions/navigate_without_back.dart';
+import 'package:furniture_app/views/auth/UI/sign_in.dart';
 import 'package:furniture_app/views/auth/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/auth/cubit/authentication_state.dart';
 import 'package:furniture_app/views/profile/logic/models/userdata_model.dart';
@@ -15,9 +17,9 @@ class ProfileView extends StatelessWidget {
       create: (context) => AuthenticationCubit()..getUserData(),
       child: BlocConsumer<AuthenticationCubit, AuthenticationState>(
         listener: (context, state) {
-          // if (state is LogoutSuccess) {
-          //   navigateWithoutBack(context, const LoginView());
-          // }
+          if (state is LogoutSuccess) {
+            navigateWithoutBack(context, const SignIn());
+          }
         },
         builder: (context, state) {
           UserDataModel? user =
@@ -53,6 +55,13 @@ class ProfileView extends StatelessWidget {
                               const SizedBox(height: 10),
                               Text(user?.email ?? "email"),
                               const SizedBox(height: 10),
+                              ElevatedButton(
+                                  onPressed: () async {
+                                    await context
+                                        .read<AuthenticationCubit>()
+                                        .signOut();
+                                  },
+                                  child: Text("Log out"))
                             ],
                           )),
                     ),

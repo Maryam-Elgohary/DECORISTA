@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
@@ -34,47 +35,90 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     }
   }
 
-  GoogleSignInAccount? googleUser;
+  //GoogleSignInAccount? googleUser;
   Future<AuthResponse> googleSignIn() async {
-    emit(GoogleSignInLoading());
-
     const webClientId =
-        '648254806178-pcctv1v6ffmufi8bbbgjjlkqpvpoq5on.apps.googleusercontent.com';
+        '949147877665-fhl29svqv457c3t4d4sqdqdphojopn71.apps.googleusercontent.com';
 
-    final GoogleSignIn googleSignIn = GoogleSignIn(
-      serverClientId: webClientId,
-    );
-    googleUser = await googleSignIn.signIn();
-    if (googleUser == null) {
-      return AuthResponse();
-    }
-    final googleAuth = await googleUser!.authentication;
-    final accessToken = googleAuth.accessToken;
-    final idToken = googleAuth.idToken;
+    emit(GoogleSignInLoading());
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+          //     serverClientId: webClientId,
+          clientId: webClientId);
 
-    if (accessToken == null || idToken == null) {
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        print('Google Sign-In cancelled.');
+        return AuthResponse();
+      }
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final accessToken = googleAuth.accessToken;
+
+      if (accessToken == null) {
+        throw 'No Access Token found.';
+      }
+      final String? idToken = googleAuth.idToken;
+      if (idToken == null) {
+        throw Exception('Failed to get ID Token');
+      }
+
+      final AuthResponse response = await Supabase.instance.client.auth
+          .signInWithIdToken(
+              provider: OAuthProvider.google,
+              idToken: idToken,
+              accessToken: accessToken);
+
+      final userId = response.user?.id;
+      if (userId == null) {
+        throw Exception("User ID is null after sign-up");
+      }
+
+      await addUserData(
+        userId: userId,
+        name: googleUser?.displayName ?? 'Unknown',
+        email: googleUser?.email ?? 'No email',
+      );
+
+      await getUserData();
+      emit(GoogleSignInSuccess());
+      return response;
+    } catch (e) {
+      print("Google Sign-In Error: $e");
       emit(GoogleSignInError());
       return AuthResponse();
     }
-
-    AuthResponse response = await client.auth.signInWithIdToken(
-      provider: OAuthProvider.google,
-      idToken: idToken,
-      accessToken: accessToken,
-    );
-    final userId = response.user?.id;
-    if (userId == null) {
-      throw Exception("User ID is null after sign-up");
-    }
-    await addUserData(
-        userId: userId,
-        name: googleUser?.displayName ?? 'Unknown',
-        email: googleUser?.email ?? 'No email');
-
-    await getUserData();
-    emit(GoogleSignInSuccess());
-    return response;
   }
+
+  // Future<void> googleSignIn() async {
+  //   emit(GoogleSignInLoading());
+
+  //   try {
+  //     await client.auth.signInWithOAuth(OAuthProvider.google,
+  //         redirectTo:
+  //             "https://wdgpfhefvzknfoeaxizj.supabase.co/auth/v1/callback");
+
+  //     final session = client.auth.currentSession;
+  //     final user = session?.user;
+
+  //     if (user == null) {
+  //       emit(GoogleSignInError());
+  //       return;
+  //     }
+
+  //     await addUserData(
+  //       userId: user.id,
+  //       name: user.userMetadata?['full_name'] ?? 'Unknown',
+  //       email: user.email ?? 'No email',
+  //     );
+
+  //     await getUserData();
+  //     emit(GoogleSignInSuccess());
+  //   } catch (e) {
+  //     emit(GoogleSignInError());
+  //     print("Google Sign-In Error: $e");
+  //   }
+  // }
 
   Future<void> register(
       {required String firstName,
@@ -132,6 +176,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     try {
       final userId = client.auth.currentUser!.id;
       final data = await client.from("users").select().eq('user_id', userId);
+
       log(data.toString());
       if (data.isNotEmpty) {
         userDataModel = UserDataModel(
@@ -144,7 +189,18 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       }
     } catch (e) {
       log(e.toString());
-      emit(GetUserDataError());
+      emit(GetUserDataError(e.toString()));
+    }
+  }
+
+  Future<void> signOut() async {
+    emit(LoginLoading());
+    try {
+      await client.auth.signOut();
+      emit(LogoutSuccess());
+    } catch (e) {
+      log(e.toString());
+      emit(LogoutError());
     }
   }
 

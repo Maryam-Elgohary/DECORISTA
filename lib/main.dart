@@ -20,19 +20,19 @@ void main() async {
 
   runApp(BlocProvider(
     create: (context) => AuthenticationCubit()..getUserData(),
-    child: const MyApp(),
+    child: MyApp(),
   ));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    SupabaseClient client = Supabase.instance.client;
     return BlocBuilder<AuthenticationCubit, AuthenticationState>(
       builder: (context, state) {
+        SupabaseClient client = Supabase.instance.client;
+
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Decorista',
@@ -47,10 +47,13 @@ class MyApp extends StatelessWidget {
                         child: CustomCircleProIndicator(),
                       ),
                     )
-                  : MainHomeView(
-                      userDataModel:
-                          context.read<AuthenticationCubit>().userDataModel!,
-                    )
+                  : (context.read<AuthenticationCubit>().userDataModel != null
+                      ? MainHomeView(
+                          userDataModel: context
+                              .read<AuthenticationCubit>()
+                              .userDataModel!) // ✅ No null issue
+                      : const SignIn() // ✅ Redirect to login if user data is null
+                  )
               : const SignIn(),
         );
       },

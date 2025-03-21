@@ -45,4 +45,13 @@ final class GetUserDataLoading extends AuthenticationState {}
 
 final class GetUserDataSuccess extends AuthenticationState {}
 
-final class GetUserDataError extends AuthenticationState {}
+final class GetUserDataError extends AuthenticationState {
+  final String message;
+  GetUserDataError(this.message);
+}
+
+final class LogoutLoading extends AuthenticationState {}
+
+final class LogoutSuccess extends AuthenticationState {}
+
+final class LogoutError extends AuthenticationState {}
