@@ -43,7 +43,6 @@ class _CategoriesListState extends State<CategoriesList> {
                           setState(() {
                             selectedIndex = index;
                           });
-                          
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -55,7 +54,7 @@ class _CategoriesListState extends State<CategoriesList> {
                               borderRadius: BorderRadius.circular(50),
                             ),
                             alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width * 0.2,
+                            width: MediaQuery.of(context).size.width * 0.3,
                             child: Text(
                               state.categories[index]['name'],
                               style: TextStyle(

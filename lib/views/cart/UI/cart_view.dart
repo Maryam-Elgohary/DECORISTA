@@ -27,7 +27,18 @@ class _CartViewState extends State<CartView> {
           List<Products> products = cartCubit.cartProducts ?? [];
 // Calculate subtotal
           double subtotal = products.fold(0.0, (sum, item) {
-            return sum + (item.price * (item.quantity ?? 1));
+            // Check if specialOffersTable is not null and has at least one element
+            if (item.specialOffersTable != null &&
+                item.specialOffersTable.isNotEmpty) {
+              // Apply discount if available
+              return sum +
+                  (item.price *
+                      ((100 - item.specialOffersTable.first.discount) / 100) *
+                      (item.quantity ?? 1));
+            } else {
+              // If no discount, just add the price
+              return sum + item.price * (item.quantity ?? 1);
+            }
           });
 
           // if (state is GetCartLoading) {
@@ -129,10 +140,8 @@ class _CartViewState extends State<CartView> {
                         products.isEmpty
                             ? Center()
                             : ListView.builder(
-                                shrinkWrap:
-                                    true, // 🔥 يحدد الحجم بناءً على المحتوى
-                                physics:
-                                    NeverScrollableScrollPhysics(), // 🔥 يمنع التمرير الداخلي
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
                                 padding: const EdgeInsets.all(16),
                                 itemCount: products.length,
                                 itemBuilder: (context, index) {
@@ -175,7 +184,6 @@ class _CartViewState extends State<CartView> {
                                           ),
                                           const SizedBox(width: 16),
                                           Expanded(
-                                            // 🔥 لمنع overflow
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
@@ -198,7 +206,10 @@ class _CartViewState extends State<CartView> {
                                                 ),
                                                 const SizedBox(height: 4),
                                                 Text(
-                                                  "\$${item.price}",
+                                                  item.specialOffersTable
+                                                          .isNotEmpty
+                                                      ? "\$${(item.price * ((100 - item.specialOffersTable.first.discount) / 100)) * item.quantity}"
+                                                      : "\$${item.price * item.quantity}",
                                                   style: GoogleFonts.poppins(
                                                       fontSize: 16,
                                                       color: AppColors
@@ -267,8 +278,7 @@ class _CartViewState extends State<CartView> {
                                                                     cartCubit
                                                                         .removeFromCart(
                                                                             item.productId);
-                                                                    setState(
-                                                                        () {});
+
                                                                     Navigator.pop(
                                                                         context);
                                                                   },

@@ -1,6 +1,7 @@
 import 'package:furniture_app/core/models/category.dart';
 import 'package:furniture_app/core/models/favorite_products.dart';
 import 'package:furniture_app/core/models/product_image.dart';
+import 'package:furniture_app/core/models/special_offers_table.dart';
 import 'package:furniture_app/views/cart/logic/model/cart_model.dart';
 
 class Products {
@@ -16,6 +17,7 @@ class Products {
   List<CartItem> cartItem;
   int quantity; // Added field for quantity
   String brand;
+  List<SpecialOffersTable> specialOffersTable;
 
   Products(
       {required this.productId,
@@ -29,7 +31,8 @@ class Products {
       required this.favoriteTable,
       required this.cartItem,
       required this.quantity, // Added to constructor
-      required this.brand});
+      required this.brand,
+      required this.specialOffersTable});
 
   factory Products.fromJson(Map<String, dynamic> json) => Products(
         productId: json["product_id"],
@@ -58,6 +61,12 @@ class Products {
             : [],
         quantity:
             json["quantity"] ?? 1, // Ensure quantity is initialized properly
+
+        specialOffersTable: json["special_offers_table"] != null
+            ? List<SpecialOffersTable>.from(
+                (json["special_offers_table"] as List)
+                    .map((x) => SpecialOffersTable.fromJson(x)))
+            : [],
       );
 
   Map<String, dynamic> toJson() => {
@@ -74,6 +83,8 @@ class Products {
             List<dynamic>.from(favoriteTable.map((x) => x.toJson())),
         "cart_table": List<dynamic>.from(cartItem.map((x) => x.toJson())),
         "quantity": quantity, // Include quantity in the toJson method
+        "special_offers_table":
+            List<dynamic>.from(specialOffersTable.map((x) => x.toJson())),
 
         'brand': brand
       };

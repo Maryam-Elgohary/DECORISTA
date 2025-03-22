@@ -16,3 +16,4 @@ class CategoryError extends CategoryState {
   final String message;
   CategoryError(this.message);
 }
+

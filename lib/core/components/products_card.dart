@@ -6,11 +6,16 @@ import 'package:furniture_app/views/products/UI/product_details.dart';
 
 class ProductsCard extends StatefulWidget {
   const ProductsCard(
-      {super.key, required this.product, this.onTap, required this.isFavorite});
+      {super.key,
+      required this.product,
+      this.onTap,
+      required this.isFavorite,
+      this.discount = 0});
 
   final Products product;
   final Function()? onTap;
   final bool isFavorite;
+  final int discount;
   @override
   _ProductsCardState createState() => _ProductsCardState();
 }
@@ -33,7 +38,13 @@ class _ProductsCardState extends State<ProductsCard> {
     final double textSize = screenWidth * 0.045; // Responsive text size
     final double iconSize = screenWidth * 0.06; // Responsive icon size
     final double buttonSize = screenWidth * 0.1; // Adjusted button size
-
+    // Calculate price after discount (if any)
+    double price = widget.product.price.toDouble();
+    if (widget.product.specialOffersTable != null &&
+        widget.product.specialOffersTable.isNotEmpty) {
+      price = widget.product.price *
+          (1 - (widget.product.specialOffersTable.first.discount / 100));
+    }
     return Card(
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -89,7 +100,7 @@ class _ProductsCardState extends State<ProductsCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "\$${widget.product.price}",
+                  "\$${price}",
                   style: TextStyle(
                     fontSize: textSize,
                     color: AppColors.orangeColor,

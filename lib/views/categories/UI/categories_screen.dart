@@ -26,6 +26,7 @@ class CategoriesScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 itemBuilder: (context, index) {
                   final category = state.categories[index];
+
                   return Container(
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.symmetric(
@@ -49,6 +50,8 @@ class CategoriesScreen extends StatelessWidget {
                       title: Text(category['name'],
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold)),
+                      // subtitle: Text(
+                      //     "${context.read<HomeCubit>().categoryProductsCount} products"),
                       trailing: const Icon(Icons.arrow_forward_ios,
                           size: 18, color: Colors.grey),
                       onTap: () {

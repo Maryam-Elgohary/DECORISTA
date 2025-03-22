@@ -258,7 +258,9 @@ class _ProductDetailsViewState extends State<ProductDetails> {
                                       ),
                                     ),
                                     Text(
-                                      "\$${widget.product.price.toStringAsFixed(2)}",
+                                      widget.product.specialOffersTable != null
+                                          ? "\$${widget.product.price * ((100 - widget.product.specialOffersTable.first.discount) / 100)}"
+                                          : "\$${widget.product.price}",
                                       style: GoogleFonts.poppins(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w500,
@@ -473,7 +475,9 @@ class _ProductDetailsViewState extends State<ProductDetails> {
                           ],
                         ),
                         Text(
-                          "Total: \$${(widget.product.price * quantity).toStringAsFixed(2)}",
+                          widget.product.specialOffersTable != null
+                              ? "\$${(widget.product.price * ((100 - widget.product.specialOffersTable.first.discount) / 100) * quantity)}"
+                              : "\$${widget.product.price * quantity}",
                           style: GoogleFonts.poppins(
                               fontSize: 18, fontWeight: FontWeight.w500),
                         ),

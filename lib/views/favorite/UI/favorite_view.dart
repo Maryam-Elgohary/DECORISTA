@@ -9,8 +9,8 @@ class FavoriteView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: buildCustomAppBar(context, "Favorites"),
-        body: Padding(
-            padding: const EdgeInsets.all(10.0),
+        body: const Padding(
+            padding: EdgeInsets.all(10.0),
             child: ProductsList(
               isFavoriteView: true,
             )));

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
+import 'package:furniture_app/core/functions/navigate_to.dart';
+import 'package:furniture_app/views/special_offers/UI/special_offers_view.dart';
 
 class DiscountBanner extends StatelessWidget {
   final List<Map<String, String>> banners = [
@@ -69,7 +71,14 @@ class DiscountBanner extends StatelessWidget {
                               borderRadius: BorderRadius.circular(15),
                             ),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            if (index == 0) {
+                              naviagteTo(context, SpecialOffers(discount: 25));
+                            }
+                            if (index == 1) {
+                              naviagteTo(context, SpecialOffers(discount: 35));
+                            }
+                          },
                           child: Text(
                             banner["buttonText"]!,
                             style: TextStyle(

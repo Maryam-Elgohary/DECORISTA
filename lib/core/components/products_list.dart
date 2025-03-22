@@ -6,24 +6,28 @@ import 'package:furniture_app/core/components/products_card.dart';
 import 'package:furniture_app/core/models/product_model.dart';
 
 class ProductsList extends StatelessWidget {
-  const ProductsList(
-      {super.key,
-      this.shrinkWrap,
-      this.physics,
-      this.query,
-      this.category,
-      this.isFavoriteView = false});
+  const ProductsList({
+    super.key,
+    this.shrinkWrap,
+    this.physics,
+    this.query,
+    this.category,
+    this.isFavoriteView = false,
+    this.discount,
+  });
 
   final bool? shrinkWrap;
   final ScrollPhysics? physics;
   final String? query;
   final String? category; // Ensuring category is required to avoid null errors
   final bool isFavoriteView;
+  final int? discount;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: context.read<HomeCubit>()
-        ..getProducts(query: query, category: category),
+        ..getProducts(query: query, category: category, discount: discount),
       child: BlocConsumer<HomeCubit, HomeState>(
         listener: (BuildContext context, HomeState state) {},
         builder: (context, state) {
@@ -48,13 +52,20 @@ class ProductsList extends StatelessWidget {
                     category?.toLowerCase())
                 .toList();
           }
-
+          if (discount != null) {
+            products = products
+                .where((p) =>
+                    p.specialOffersTable.isNotEmpty &&
+                    p.specialOffersTable.first.discount == discount)
+                .toList();
+          }
           if (isFavoriteView) {
             homeCubit.favoriteProductList;
             products = products
                 .where((p) => p.favoriteTable.any((f) => f.isFavorite))
                 .toList();
           }
+
           if (state is GetDataLoading) {
             return const Center(child: CustomCircleProIndicator());
           }

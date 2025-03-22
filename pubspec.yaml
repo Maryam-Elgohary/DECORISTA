@@ -50,6 +50,7 @@ dependencies:
   line_icons: ^2.0.3
   dio: ^5.8.0+1
   flutter_rating_bar: ^4.0.1
+  flutter_paymob: ^1.0.5
 flutter_native_splash:
   color: "#493628"
   image: assets/logo_1.png

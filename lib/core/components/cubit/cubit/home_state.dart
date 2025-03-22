@@ -40,3 +40,23 @@ final class RemoveFromCartLoading extends HomeState {}
 final class RemoveFromCartSuccess extends HomeState {}
 
 final class RemoveFromCartError extends HomeState {}
+
+class CategoryProductsCountUpdated extends HomeState {
+  final int categoryProductCount;
+
+  CategoryProductsCountUpdated(this.categoryProductCount);
+}
+
+class HomeLoading extends HomeState {}
+
+class HomeLoaded extends HomeState {
+  final List<Map<String, dynamic>> products;
+
+  HomeLoaded(this.products);
+}
+
+class HomeError extends HomeState {
+  final String message;
+
+  HomeError(this.message);
+}
