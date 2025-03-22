@@ -5,7 +5,13 @@ import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CheckOut extends StatefulWidget {
-  const CheckOut({super.key});
+  CheckOut({
+    super.key,
+    required this.subtotal,
+    required this.shippingCost,
+  });
+  double subtotal;
+  double shippingCost;
 
   @override
   State<CheckOut> createState() => _CheckOutState();
@@ -228,7 +234,7 @@ class _CheckOutState extends State<CheckOut> {
                       fontSize: 16, color: Color(0xff828A89)),
                 ),
                 Text(
-                  "\$908.72",
+                  "\$${widget.subtotal.toStringAsFixed(2)}",
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     color: AppColors.orangeColor,
@@ -247,7 +253,7 @@ class _CheckOutState extends State<CheckOut> {
                       fontSize: 16, color: Color(0xff828A89)),
                 ),
                 Text(
-                  "\$26.00",
+                  "\$${widget.shippingCost}",
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     color: AppColors.orangeColor,
@@ -273,7 +279,7 @@ class _CheckOutState extends State<CheckOut> {
                   ),
                 ),
                 Text(
-                  "\$934.72",
+                  "\$${(widget.subtotal + widget.shippingCost).toStringAsFixed(2)}",
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     color: AppColors.orangeColor,

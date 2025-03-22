@@ -7,7 +7,11 @@ final class HomeInitial extends HomeState {}
 
 final class GetDataLoading extends HomeState {}
 
-final class GetDataSuccess extends HomeState {}
+final class GetDataSuccess extends HomeState {
+  final List<Products> products;
+
+  GetDataSuccess(this.products);
+}
 
 final class GetDataError extends HomeState {}
 
@@ -24,3 +28,15 @@ final class RemoveFromFavoriteSuccess extends HomeState {}
 final class RemoveFromFavoriteError extends HomeState {}
 
 final class FavoriteUpdated extends HomeState {}
+
+final class AddToCartLoading extends HomeState {}
+
+final class AddToCartSuccess extends HomeState {}
+
+final class AddToCartError extends HomeState {}
+
+final class RemoveFromCartLoading extends HomeState {}
+
+final class RemoveFromCartSuccess extends HomeState {}
+
+final class RemoveFromCartError extends HomeState {}

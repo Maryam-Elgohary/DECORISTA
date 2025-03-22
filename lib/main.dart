@@ -7,6 +7,7 @@ import 'package:furniture_app/core/sensetive_data.dart';
 import 'package:furniture_app/views/auth/UI/sign_in.dart';
 import 'package:furniture_app/views/auth/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/auth/cubit/authentication_state.dart';
+import 'package:furniture_app/views/cart/logic/cubit/cart_cubit.dart';
 import 'package:furniture_app/views/navbar/UI/main_home_view.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -26,6 +27,9 @@ void main() async {
       ),
       BlocProvider(
         create: (context) => HomeCubit(),
+      ),
+      BlocProvider(
+        create: (context) => CartCubit(),
       )
     ],
     child: MyApp(),

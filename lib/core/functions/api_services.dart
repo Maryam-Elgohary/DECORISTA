@@ -6,7 +6,7 @@ class ApiServices {
       baseUrl: "https://wdgpfhefvzknfoeaxizj.supabase.co/rest/v1/",
       headers: {
         "apikey": anonKey_supabase,
-        "Authorizaion": authorization_anonKey
+        //  "Authorization": authorization_anonKey
       }));
 
   Future<Response> getData(String path) async {

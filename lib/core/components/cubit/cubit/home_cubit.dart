@@ -25,16 +25,21 @@ class HomeCubit extends Cubit<HomeState> {
     emit(GetDataLoading());
     try {
       Response response = await _apiServices.getData(
-          "products_table?select=*,category_table(*),product_image_table(*),favorite_table(*)");
+          "products_table?select=*,category_table(*),product_image_table(*),favorite_table(*),cart_table(*)");
       log("API Response: ${response.data}");
+
+      print("Products after mapping: $products");
 
       for (var product in response.data) {
         products.add(Products.fromJson(product));
       }
+
+      log("Fetched products: ${products.length}");
       getProductsByCategory(category);
+
       getFavoriteProducts();
       search(query);
-      emit(GetDataSuccess());
+      emit(GetDataSuccess(products));
     } catch (e) {
       log(e.toString());
 
@@ -44,14 +49,28 @@ class HomeCubit extends Cubit<HomeState> {
 
   void getProductsByCategory(String? category) {
     if (category != null) {
+      log("Filtering category: $category");
       for (var product in products) {
+        log("Product category: ${product.categoryTable.categoryName}");
         if (product.categoryTable.categoryName.trim().toLowerCase() ==
             category.trim().toLowerCase()) {
           categoryProducts.add(product);
         }
       }
+      log("Filtered products count: ${categoryProducts.length}");
     }
   }
+
+  // void getProductsByCategory(String? category) {
+  //   if (category != null) {
+  //     for (var product in products) {
+  //       if (product.categoryTable.categoryName.trim().toLowerCase() ==
+  //           category.trim().toLowerCase()) {
+  //         categoryProducts.add(product);
+  //       }
+  //     }
+  //   }
+  // }
 
   void search(String? query) {
     if (query != null) {

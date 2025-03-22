@@ -21,13 +21,13 @@ class ProductsList extends StatelessWidget {
   final bool isFavoriteView;
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          HomeCubit()..getProducts(query: query, category: category),
+    return BlocProvider.value(
+      value: context.read<HomeCubit>()
+        ..getProducts(query: query, category: category),
       child: BlocConsumer<HomeCubit, HomeState>(
         listener: (BuildContext context, HomeState state) {},
         builder: (context, state) {
-          HomeCubit homeCubit = context.watch<HomeCubit>();
+          HomeCubit homeCubit = context.read<HomeCubit>();
 
           List<Products> products = homeCubit.products;
 
@@ -38,14 +38,19 @@ class ProductsList extends StatelessWidget {
                         query!.toLowerCase()) // Case-insensitive search
                     )
                 .toList();
+            context.read<HomeCubit>().searchResults;
           }
           if (category != null) {
+            context.read<HomeCubit>().categoryProducts;
             products = products
-                .where((p) => p.categoryTable.categoryName == category)
+                .where((p) =>
+                    p.categoryTable.categoryName.toLowerCase() ==
+                    category?.toLowerCase())
                 .toList();
           }
 
           if (isFavoriteView) {
+            homeCubit.favoriteProductList;
             products = products
                 .where((p) => p.favoriteTable.any((f) => f.isFavorite))
                 .toList();

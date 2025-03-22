@@ -5,11 +5,10 @@ import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/components/cubit/cubit/home_cubit.dart';
 import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
-import 'package:furniture_app/core/functions/navigate_to.dart';
 import 'package:furniture_app/core/functions/navigate_without_back.dart';
 import 'package:furniture_app/core/models/product_model.dart';
 import 'package:furniture_app/views/auth/cubit/authentication_cubit.dart';
-import 'package:furniture_app/views/cart/UI/cart_view.dart';
+import 'package:furniture_app/views/cart/logic/cubit/cart_cubit.dart';
 import 'package:furniture_app/views/products/UI/comments_list.dart';
 import 'package:furniture_app/views/products/logic/cubit/product_details_cubit.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -482,9 +481,17 @@ class _ProductDetailsViewState extends State<ProductDetails> {
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton.icon(
-                      onPressed: () {
-                        naviagteTo(context, CartView());
-                      },
+                      onPressed: state is AddToCartLoading
+                          ? null // Disable button while adding
+                          : () {
+                              final cartCubit = context.read<CartCubit>();
+
+                              // Ensure quantity is updated correctly
+                              final currentQuantity = quantity;
+
+                              cartCubit.addToCart(
+                                  widget.product.productId, currentQuantity);
+                            },
                       icon: Icon(Icons.shopping_cart, color: Colors.white),
                       label: Text(
                         "Add To Cart",

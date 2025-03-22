@@ -43,6 +43,7 @@ class _CategoriesListState extends State<CategoriesList> {
                           setState(() {
                             selectedIndex = index;
                           });
+                          
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),

@@ -11,6 +11,7 @@ class CustomCircleProIndicator extends StatelessWidget {
     return const Center(
       child: CircularProgressIndicator(
         color: AppColors.darkBrown,
+        
       ),
     );
   }
