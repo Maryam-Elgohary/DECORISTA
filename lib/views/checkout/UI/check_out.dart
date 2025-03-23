@@ -331,9 +331,7 @@ class _CheckOutState extends State<CheckOut> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onPressed: () {
-                  // Handle checkout action
-                },
+                onPressed: () {},
                 child: Text(
                   "Payment",
                   style: GoogleFonts.poppins(
