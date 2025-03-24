@@ -1,0 +1,15 @@
+
+  import 'package:flutter/material.dart';
+import 'package:furniture_app/core/app_colors.dart';
+import 'package:furniture_app/views/profile/logic/models/userdata_model.dart';
+
+Widget buildUserName(UserDataModel? user) {
+    return Text(
+      "${user?.firstName} ${user?.lastName}",
+      style: const TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 20,
+        color: AppColors.darkBrown,
+      ),
+    );
+  }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/models/product_model.dart';
 import 'package:furniture_app/views/cart/UI/widgets/quantity_button.dart';
-import 'package:furniture_app/views/cart/logic/cubit/cart_cubit.dart';
+import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20patterns/cubit/cart_cubit.dart';
 
 Widget buildQuantityControls(
   Products item,

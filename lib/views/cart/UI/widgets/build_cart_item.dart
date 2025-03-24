@@ -4,7 +4,7 @@ import 'package:furniture_app/core/models/product_model.dart';
 import 'package:furniture_app/views/cart/UI/widgets/build_product_details.dart';
 import 'package:furniture_app/views/cart/UI/widgets/build_product_image.dart';
 import 'package:furniture_app/views/cart/UI/widgets/build_quantity_controls.dart';
-import 'package:furniture_app/views/cart/logic/cubit/cart_cubit.dart';
+import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20patterns/cubit/cart_cubit.dart';
 
 Widget buildCartItem(Products item, BuildContext context) {
   final cartCubit = context.read<CartCubit>();

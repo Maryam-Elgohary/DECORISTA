@@ -7,7 +7,7 @@ import 'package:furniture_app/core/functions/navigate_without_back.dart';
 import 'package:furniture_app/core/models/product_model.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
-import 'package:furniture_app/views/cart/logic/cubit/cart_cubit.dart';
+import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20patterns/cubit/cart_cubit.dart';
 import 'package:furniture_app/views/products_details/UI/comments_list.dart';
 import 'package:furniture_app/views/products_details/UI/product_details_widgets.dart/bottom_action_section.dart';
 import 'package:furniture_app/views/products_details/UI/product_details_widgets.dart/comment_input_section.dart';
