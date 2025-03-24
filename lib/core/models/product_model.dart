@@ -89,3 +89,19 @@ class Products {
         'brand': brand
       };
 }
+
+extension ProductExtensions on Products {
+  bool get hasDiscount => specialOffersTable?.isNotEmpty ?? false;
+
+  double get discountedPrice => hasDiscount
+      ? price * (1 - (specialOffersTable!.first.discount / 100))
+      : price.toDouble();
+
+  int get discountPercentage =>
+      hasDiscount ? specialOffersTable!.first.discount : 0;
+
+  String get formattedOriginalPrice => "\$${price.toStringAsFixed(2)}";
+
+  String get formattedDiscountedPrice =>
+      "\$${discountedPrice.toStringAsFixed(2)}";
+}

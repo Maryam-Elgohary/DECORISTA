@@ -86,7 +86,7 @@ class _HomeViewState extends State<HomeView> {
                     height: 10,
                   ),
                   DiscountBanner(),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -113,7 +113,7 @@ class _HomeViewState extends State<HomeView> {
                       )
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  //    const SizedBox(height: 5),
                   CategoriesList(),
                 ],
               ),

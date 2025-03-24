@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/functions/navigate_to.dart';
+import 'package:furniture_app/core/functions/navigate_without_back.dart';
 import 'package:furniture_app/core/models/product_model.dart';
+import 'package:furniture_app/views/auth/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/cart/logic/cubit/cart_cubit.dart';
 import 'package:furniture_app/views/cart/logic/cubit/cart_state.dart';
 import 'package:furniture_app/views/checkout/UI/check_out.dart';
+import 'package:furniture_app/views/navbar/UI/main_home_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CartView extends StatefulWidget {
@@ -17,6 +20,7 @@ class CartView extends StatefulWidget {
 
 class _CartViewState extends State<CartView> {
   double shippingCost = 50;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -25,25 +29,29 @@ class _CartViewState extends State<CartView> {
         builder: (context, state) {
           CartCubit cartCubit = context.read<CartCubit>();
           List<Products> products = cartCubit.cartProducts ?? [];
-// Calculate subtotal
+
+          // Calculate subtotal with discount applied
           double subtotal = products.fold(0.0, (sum, item) {
-            // Check if specialOffersTable is not null and has at least one element
+            double discountedPrice = item.price.toDouble();
             if (item.specialOffersTable != null &&
                 item.specialOffersTable.isNotEmpty) {
-              // Apply discount if available
-              return sum +
-                  (item.price *
-                      ((100 - item.specialOffersTable.first.discount) / 100) *
-                      (item.quantity ?? 1));
+              // Ensure the discount is valid
+              double discount = item.specialOffersTable.first.discount
+                  .toDouble(); // Convert to double
+              if (discount > 0.0 && discount <= 100.0) {
+                discountedPrice =
+                    (item.price * ((100 - discount) / 100)).toDouble();
+                print(
+                    "Product: ${item.productName}, Original Price: ${item.price}, Discount: $discount%, Discounted Price: $discountedPrice");
+              } else {
+                print(
+                    "Invalid discount for product: ${item.productName}. Discount: $discount");
+              }
             } else {
-              // If no discount, just add the price
-              return sum + item.price * (item.quantity ?? 1);
+              print("No discount for product: ${item.productName}");
             }
+            return sum + (discountedPrice * (item.quantity ?? 1));
           });
-
-          // if (state is GetCartLoading) {
-          //   return Center(child: CircularProgressIndicator());
-          // }
 
           return Scaffold(
             backgroundColor: const Color(0xfff4f4f4),
@@ -58,7 +66,12 @@ class _CartViewState extends State<CartView> {
               backgroundColor: Colors.transparent,
               leading: IconButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    naviagteTo(
+                        context,
+                        MainHomeView(
+                            userDataModel: context
+                                .read<AuthenticationCubit>()
+                                .userDataModel!));
                   },
                   icon: const Icon(
                     Icons.arrow_back,
@@ -105,10 +118,10 @@ class _CartViewState extends State<CartView> {
                                   : () {
                                       final cartCubit =
                                           context.read<CartCubit>();
-
                                       cartCubit.removeAllFromCart();
                                       setState(() {});
-                                      Navigator.pop(context);
+                                      // Navigator.pop(context);
+                                      navigateWithoutBack(context, widget);
                                     },
                               child: Text(
                                 'Yes',
@@ -146,7 +159,7 @@ class _CartViewState extends State<CartView> {
                                 itemCount: products.length,
                                 itemBuilder: (context, index) {
                                   final item = products[index];
-                                  var currentQuantity = item.quantity;
+                                  var currentQuantity = item.quantity ?? 1;
 
                                   return Card(
                                     color: Colors.white,
@@ -223,79 +236,84 @@ class _CartViewState extends State<CartView> {
                                                 CrossAxisAlignment.end,
                                             children: [
                                               GestureDetector(
-                                                onTap: () {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return AlertDialog(
-                                                        title: Text(
-                                                          'Delete Product',
-                                                          style: GoogleFonts
-                                                              .poppins(
-                                                            fontSize: 18,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: AppColors
-                                                                .darkBrown,
-                                                          ),
-                                                        ),
-                                                        content: Text(
-                                                          'Are you sure you want to delete this product from the cart?',
-                                                          style: GoogleFonts
-                                                              .poppins(
-                                                            fontSize: 16,
-                                                            color: AppColors
-                                                                .darkBrown,
-                                                          ),
-                                                        ),
-                                                        actions: <Widget>[
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(); // Close the dialog
-                                                            },
-                                                            child: Text(
-                                                              'No',
-                                                              style: GoogleFonts
-                                                                  .poppins(
-                                                                fontSize: 16,
-                                                                color: AppColors
-                                                                    .darkBrown,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          TextButton(
-                                                            onPressed: state
-                                                                    is RemoveFromCartLoading
-                                                                ? null // Disable button while adding
-                                                                : () {
-                                                                    final cartCubit =
-                                                                        context.read<
-                                                                            CartCubit>();
+                                                onTap: () async {
+                                                  final cartCubit =
+                                                      context.read<CartCubit>();
+                                                  await cartCubit
+                                                      .removeFromCart(
+                                                          item.productId);
 
-                                                                    cartCubit
-                                                                        .removeFromCart(
-                                                                            item.productId);
+                                                  // showDialog(
+                                                  //   context: context,
+                                                  //   builder:
+                                                  //       (BuildContext context) {
+                                                  //     return AlertDialog(
+                                                  //       title: Text(
+                                                  //         'Delete Product',
+                                                  //         style: GoogleFonts
+                                                  //             .poppins(
+                                                  //           fontSize: 18,
+                                                  //           fontWeight:
+                                                  //               FontWeight.bold,
+                                                  //           color: AppColors
+                                                  //               .darkBrown,
+                                                  //         ),
+                                                  //       ),
+                                                  //       content: Text(
+                                                  //         'Are you sure you want to delete this product from the cart?',
+                                                  //         style: GoogleFonts
+                                                  //             .poppins(
+                                                  //           fontSize: 16,
+                                                  //           color: AppColors
+                                                  //               .darkBrown,
+                                                  //         ),
+                                                  //       ),
+                                                  //       actions: <Widget>[
+                                                  //         TextButton(
+                                                  //           onPressed: () {
+                                                  //             Navigator.of(
+                                                  //                     context)
+                                                  //                 .pop(); // Close the dialog
+                                                  //           },
+                                                  //           child: Text(
+                                                  //             'No',
+                                                  //             style: GoogleFonts
+                                                  //                 .poppins(
+                                                  //               fontSize: 16,
+                                                  //               color: AppColors
+                                                  //                   .darkBrown,
+                                                  //             ),
+                                                  //           ),
+                                                  //         ),
+                                                  //         TextButton(
+                                                  //           onPressed: state
+                                                  //                   is RemoveFromCartLoading
+                                                  //               ? null // Disable button while deleting
+                                                  //               : () async {
+                                                  //                   final cartCubit =
+                                                  //                       context.read<
+                                                  //                           CartCubit>();
+                                                  //                   await cartCubit
+                                                  //                       .removeFromCart(
+                                                  //                           item.productId);
 
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                            child: Text(
-                                                              'Yes',
-                                                              style: GoogleFonts
-                                                                  .poppins(
-                                                                fontSize: 16,
-                                                                color: AppColors
-                                                                    .darkBrown,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
+                                                  //                   Navigator.pop(
+                                                  //                       context);
+                                                  //                 },
+                                                  //           child: Text(
+                                                  //             'Yes',
+                                                  //             style: GoogleFonts
+                                                  //                 .poppins(
+                                                  //               fontSize: 16,
+                                                  //               color: AppColors
+                                                  //                   .darkBrown,
+                                                  //             ),
+                                                  //           ),
+                                                  //         ),
+                                                  //       ],
+                                                  //     );
+                                                  //   },
+                                                  // );
                                                 },
                                                 child: Icon(
                                                   Icons.delete,
@@ -311,28 +329,23 @@ class _CartViewState extends State<CartView> {
                                               Row(
                                                 children: [
                                                   _buildQuantityButton(
-                                                      icon: Icons.remove,
-                                                      color: const Color(
-                                                          0xfff0f0f2),
-                                                      iconColor: const Color(
-                                                          0xff828A89),
-                                                      onTap: () {
-                                                        setState(() {
-                                                          if (currentQuantity >
-                                                              1) {
-                                                            currentQuantity--;
-                                                          }
-                                                        });
-                                                        context
-                                                            .read<CartCubit>()
-                                                            .updateQuantity(
-                                                                item.productId,
-                                                                currentQuantity);
-                                                      }),
+                                                    icon: Icons.remove,
+                                                    color:
+                                                        const Color(0xfff0f0f2),
+                                                    iconColor:
+                                                        const Color(0xff828A89),
+                                                    onTap: () {
+                                                      if (currentQuantity > 1) {
+                                                        currentQuantity--;
+                                                        cartCubit.updateQuantity(
+                                                            item.productId,
+                                                            currentQuantity);
+                                                      }
+                                                    },
+                                                  ),
                                                   const SizedBox(width: 10),
                                                   Text(
-                                                    //   "${item.cartItem.isNotEmpty ? item.cartItem.first.quantity ?? 1 : 1}",
-                                                    "${currentQuantity}",
+                                                    "$currentQuantity",
                                                     style: const TextStyle(
                                                       fontSize: 18,
                                                       fontWeight:
@@ -341,22 +354,18 @@ class _CartViewState extends State<CartView> {
                                                   ),
                                                   const SizedBox(width: 10),
                                                   _buildQuantityButton(
-                                                      icon: Icons.add,
-                                                      color:
-                                                          AppColors.darkBrown,
-                                                      iconColor: Colors.white,
-                                                      onTap: () {
-                                                        setState(() {
-                                                          currentQuantity++;
-                                                        });
-                                                        context
-                                                            .read<CartCubit>()
-                                                            .updateQuantity(
-                                                                item.productId,
-                                                                currentQuantity);
-                                                      }),
+                                                    icon: Icons.add,
+                                                    color: AppColors.darkBrown,
+                                                    iconColor: Colors.white,
+                                                    onTap: () {
+                                                      currentQuantity++;
+                                                      cartCubit.updateQuantity(
+                                                          item.productId,
+                                                          currentQuantity);
+                                                    },
+                                                  ),
                                                 ],
-                                              ),
+                                              )
                                             ],
                                           ),
                                         ],
@@ -511,11 +520,7 @@ class _CartViewState extends State<CartView> {
                   ),
           );
         },
-        listener: (BuildContext context, CartState state) {
-          if (state is CartUpdated) {
-            setState() {}
-          }
-        },
+        listener: (BuildContext context, CartState state) {},
       ),
     );
   }

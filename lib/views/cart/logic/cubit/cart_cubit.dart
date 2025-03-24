@@ -26,7 +26,7 @@ class CartCubit extends Cubit<CartState> {
     }
     try {
       Response response = await _apiServices.getData(
-          "cart_table?select=*,product_id(*,category_table(*),product_image_table(*))&customer_id=eq.$userId");
+          "cart_table?select=*,product_id(*,category_table(*),product_image_table(*),special_offers_table(*))&customer_id=eq.$userId");
 
       log("Cart API Response: ${response.data}");
 
@@ -82,6 +82,7 @@ class CartCubit extends Cubit<CartState> {
           "cart_table?customer_id=eq.${Uri.encodeComponent(userId!)}&product_id=eq.${Uri.encodeComponent(productId)}");
 
       await getCartProducts();
+      //  cartProducts.removeWhere((product) => product.productId == productId);
 
       emit(RemoveFromCartSuccess());
     } catch (e) {
@@ -105,21 +106,45 @@ class CartCubit extends Cubit<CartState> {
     }
   }
 
-  // Update quantity of product in cart
+  bool checkIsInCart(String productId) {
+    getCartProducts();
+    // Check if any product in the cart has the same productId
+    return cartProducts.any((product) => product.productId == productId);
+  }
+
   Future<void> updateQuantity(String productId, int newQuantity) async {
     emit(UpdateQuantityLoading());
+
+    int productIndex = -1; // Declare productIndex here
+    int previousQuantity = 0; // Store the previous quantity
+
     try {
-      // Send a PATCH request to update the quantity of the product in the cart
+      // Step 1: Update the quantity locally
+      productIndex = cartProducts.indexWhere((p) => p.productId == productId);
+      if (productIndex != -1) {
+        previousQuantity = cartProducts[productIndex].quantity ??
+            1; // Store the previous quantity
+        cartProducts[productIndex].quantity = newQuantity;
+        emit(CartUpdated()); // Notify the UI of the local change
+      }
+
+      // Step 2: Sync the update with the server
       await _apiServices.patchData(
         "cart_table?customer_id=eq.${Uri.encodeComponent(userId!)}&product_id=eq.${Uri.encodeComponent(productId)}",
         {"quantity": newQuantity},
       );
 
-      // After updating, fetch the cart products again
-      await getCartProducts();
       emit(UpdateQuantitySuccess());
     } catch (e) {
       log("Error updating quantity: $e");
+
+      // Revert the local change if the server update fails
+      if (productIndex != -1) {
+        cartProducts[productIndex].quantity =
+            previousQuantity; // Revert to the previous value
+        emit(CartUpdated()); // Notify the UI of the reverted change
+      }
+
       emit(UpdateQuantityError());
     }
   }

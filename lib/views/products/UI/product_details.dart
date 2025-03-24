@@ -37,22 +37,35 @@ class _ProductDetailsViewState extends State<ProductDetails> {
   }
 
   Future<void> fetchProductImages() async {
-    final supabase = Supabase.instance.client;
-    final response = await supabase
-        .from('product_image_table')
-        .select('image_url, color')
-        .eq('product_id', widget.product.productId);
+    try {
+      final supabase = Supabase.instance.client;
+      final response = await supabase
+          .from('product_image_table')
+          .select('image_url, color')
+          .eq('product_id', widget.product.productId);
 
-    if (response.isNotEmpty) {
-      Map<Color, String> fetchedColorToImage = {};
-      for (var item in response) {
-        Color color = _hexToColor(item['color']); // Convert HEX to Color
-        fetchedColorToImage[color] = item['image_url'];
+      if (response.isNotEmpty) {
+        Map<Color, String> fetchedColorToImage = {};
+        for (var item in response) {
+          try {
+            Color color =
+                _hexToColor(item['color'] ?? '#FFFFFF'); // Default white
+            fetchedColorToImage[color] = item['image_url'] ?? '';
+          } catch (e) {
+            // Handle individual item errors
+          }
+        }
+
+        setState(() {
+          colorToImage = fetchedColorToImage;
+          _selectedColor = colorToImage.keys.firstOrNull ?? Colors.white;
+        });
       }
-
+    } catch (e) {
+      // Handle fetch error
       setState(() {
-        colorToImage = fetchedColorToImage;
-        _selectedColor = colorToImage.keys.first; // Default to the first color
+        colorToImage = {Colors.white: 'https://via.placeholder.com/150'};
+        _selectedColor = Colors.white;
       });
     }
   }
@@ -117,8 +130,11 @@ class _ProductDetailsViewState extends State<ProductDetails> {
                                 child: ClipRRect(
                                   child: Image.network(
                                     colorToImage[_selectedColor] ??
-                                        widget.product.productImageTable[0]
-                                            .imageUrl,
+                                        (widget.product.productImageTable
+                                                .isNotEmpty
+                                            ? widget.product.productImageTable
+                                                .first.imageUrl
+                                            : 'https://via.placeholder.com/150'),
                                     fit: BoxFit.fill,
                                     width: imageWidth,
                                     height: imageHeight,
@@ -257,16 +273,38 @@ class _ProductDetailsViewState extends State<ProductDetails> {
                                             fontWeight: FontWeight.w500),
                                       ),
                                     ),
-                                    Text(
-                                      widget.product.specialOffersTable != null
-                                          ? "\$${widget.product.price * ((100 - widget.product.specialOffersTable.first.discount) / 100)}"
-                                          : "\$${widget.product.price}",
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xffF2A666),
-                                      ),
-                                    ),
+                                    widget.product.hasDiscount
+                                        ? Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "\$${widget.product.price.toStringAsFixed(2)}",
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  decoration: TextDecoration
+                                                      .lineThrough,
+                                                  color: AppColors.lightBrown,
+                                                ),
+                                              ),
+                                              Text(
+                                                "\$${widget.product.discountedPrice.toStringAsFixed(2)}",
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: AppColors.orangeColor,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : Text(
+                                            "\$${widget.product.price.toStringAsFixed(2)}",
+                                            style: TextStyle(
+                                              color: AppColors.orangeColor,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          )
                                   ],
                                 ),
                                 const SizedBox(height: 10),
@@ -475,11 +513,11 @@ class _ProductDetailsViewState extends State<ProductDetails> {
                           ],
                         ),
                         Text(
-                          widget.product.specialOffersTable != null
-                              ? "\$${(widget.product.price * ((100 - widget.product.specialOffersTable.first.discount) / 100) * quantity)}"
-                              : "\$${widget.product.price * quantity}",
+                          "\$${(widget.product.discountedPrice * quantity).toStringAsFixed(2)}",
                           style: GoogleFonts.poppins(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              color: AppColors.darkBrown,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -490,11 +528,29 @@ class _ProductDetailsViewState extends State<ProductDetails> {
                           : () {
                               final cartCubit = context.read<CartCubit>();
 
-                              // Ensure quantity is updated correctly
-                              final currentQuantity = quantity;
+                              // Check if the product is already in the cart
+                              if (cartCubit
+                                  .checkIsInCart(widget.product.productId)) {
+                                // Show a message if the product is already in the cart
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text("Product is already in the cart!"),
+                                  ),
+                                );
+                              } else {
+                                // If the product is not in the cart, add it
+                                final currentQuantity = quantity;
 
-                              cartCubit.addToCart(
-                                  widget.product.productId, currentQuantity);
+                                cartCubit.addToCart(
+                                    widget.product.productId, currentQuantity);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text("Added to cart successfully!"),
+                                  ),
+                                );
+                              }
                             },
                       icon: Icon(Icons.shopping_cart, color: Colors.white),
                       label: Text(

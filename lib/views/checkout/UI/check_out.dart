@@ -1,7 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_paymob_egypt/flutter_paymob_egypt.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/functions/build_appbar.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
+import 'package:furniture_app/core/functions/navigate_to.dart';
+import 'package:furniture_app/core/sensetive_data.dart';
+import 'package:furniture_app/views/checkout/UI/success_payment.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -13,6 +19,7 @@ class CheckOut extends StatefulWidget {
   });
   double subtotal;
   double shippingCost;
+
 
   @override
   State<CheckOut> createState() => _CheckOutState();
@@ -61,9 +68,8 @@ class _CheckOutState extends State<CheckOut> {
 
   @override
   Widget build(BuildContext context) {
-    String totalPayment = ((widget.subtotal + widget.shippingCost) *
-            (1 - _discountPercentage / 100))
-        .toStringAsFixed(2);
+    double totalPayment = ((widget.subtotal + widget.shippingCost) *
+        (1 - _discountPercentage / 100));
 
     TextEditingController _promoCodeController = TextEditingController();
     return Scaffold(
@@ -331,7 +337,35 @@ class _CheckOutState extends State<CheckOut> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  if (selectedPaymentMethod == 0) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => FlutterPaymobPayment(
+                        cardInfo: CardInfo(
+                          apiKey:
+                              paymobApiKey, // from dashboard Select Settings -> Account Info -> API Key
+                          iframesID:
+                              iframeId, // from paymob Select Developers -> iframes
+                          integrationID:
+                              integrationCardId, // from dashboard Select Developers -> Payment Integrations -> Online Card ID
+                        ),
+                        totalPrice:
+                            totalPayment, // required pay with Egypt currency
+                        appBar: null, // optional
+                        loadingIndicator: null, // optional
+                        billingData: null, // optional => your data
+                        items: const [], // optional
+                        successResult: (data) {
+                          log('successResult: $data');
+                          naviagteTo(context, SuccessPayment());
+                        },
+                        errorResult: (error) {
+                          log('errorResult: $error');
+                        },
+                      ),
+                    ));
+                  }
+                },
                 child: Text(
                   "Payment",
                   style: GoogleFonts.poppins(

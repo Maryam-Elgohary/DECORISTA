@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_app/core/models/product_model.dart';
 
 @immutable
 abstract class CartState {}
@@ -30,10 +29,7 @@ class UpdateQuantitySuccess extends CartState {}
 
 class UpdateQuantityError extends CartState {}
 
-class CartUpdated extends CartState {
-  final List<Products> cartProducts;
-  CartUpdated(this.cartProducts);
-}
+class CartUpdated extends CartState {}
 
 class RemoveAllFromCartLoading extends CartState {}
 
