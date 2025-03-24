@@ -5,8 +5,9 @@ import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
 import 'package:furniture_app/core/functions/my_observer.dart';
 import 'package:furniture_app/core/sensetive_data.dart';
 import 'package:furniture_app/views/auth/UI/sign_in.dart';
-import 'package:furniture_app/views/auth/cubit/authentication_cubit.dart';
-import 'package:furniture_app/views/auth/cubit/authentication_state.dart';
+import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_state.dart';
+import 'package:furniture_app/views/auth/logic/repository%20pattern/auth_repository.dart';
+import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/cart/logic/cubit/cart_cubit.dart';
 import 'package:furniture_app/views/navbar/UI/main_home_view.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -18,12 +19,18 @@ void main() async {
     url: '$url_supabase',
     anonKey: anonKey_supabase,
   );
+
   Bloc.observer = MyObserver();
+
+  // Create repository instance first
+  final authRepository = SupabaseAuthRepository(Supabase.instance.client);
 
   runApp(MultiBlocProvider(
     providers: [
       BlocProvider(
-        create: (context) => AuthenticationCubit()..getUserData(),
+        // Provide the repository when creating the cubit
+        create: (context) =>
+            AuthenticationCubit(authRepository: authRepository)..getUserData(),
       ),
       BlocProvider(
         create: (context) => HomeCubit(),
@@ -32,7 +39,7 @@ void main() async {
         create: (context) => CartCubit(),
       )
     ],
-    child: MyApp(),
+    child: const MyApp(),
   ));
 }
 
@@ -49,7 +56,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Decorista',
           theme: ThemeData(
-            scaffoldBackgroundColor: Color(0xfff4f4f4),
+            scaffoldBackgroundColor: Color(0xffffffff),
             useMaterial3: true,
           ),
           home: client.auth.currentUser != null

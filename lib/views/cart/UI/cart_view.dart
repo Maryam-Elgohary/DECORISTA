@@ -4,7 +4,7 @@ import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/functions/navigate_to.dart';
 import 'package:furniture_app/core/functions/navigate_without_back.dart';
 import 'package:furniture_app/core/models/product_model.dart';
-import 'package:furniture_app/views/auth/cubit/authentication_cubit.dart';
+import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/cart/logic/cubit/cart_cubit.dart';
 import 'package:furniture_app/views/cart/logic/cubit/cart_state.dart';
 import 'package:furniture_app/views/checkout/UI/check_out.dart';

@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
 import 'package:furniture_app/core/functions/navigate_to.dart';
-import 'package:furniture_app/views/auth/cubit/authentication_cubit.dart';
+import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
+import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/navbar/UI/main_home_view.dart';
 import 'package:furniture_app/views/profile/logic/models/userdata_model.dart';
 
