@@ -36,3 +36,8 @@ class RemoveAllFromCartLoading extends CartState {}
 class RemoveAllFromCartSuccess extends CartState {}
 
 class RemoveAllFromCartError extends CartState {}
+
+class CartError extends CartState {
+  final String message;
+  CartError({required this.message});
+}

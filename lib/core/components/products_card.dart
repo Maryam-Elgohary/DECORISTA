@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/functions/navigate_to.dart';
 import 'package:furniture_app/core/models/product_model.dart';
-import 'package:furniture_app/views/products/UI/product_details.dart';
+import 'package:furniture_app/views/products_details/UI/product_details.dart';
 
 class ProductsCard extends StatefulWidget {
   const ProductsCard({
