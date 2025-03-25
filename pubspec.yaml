@@ -65,6 +65,7 @@ flutter_native_splash:
   ios: true
   android_gravity: center
   ios_content_mode: center
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
