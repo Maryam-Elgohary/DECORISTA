@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
+import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
 import 'package:furniture_app/core/functions/navigate_to.dart';
 import 'package:furniture_app/core/functions/show_msg.dart';
 import 'package:furniture_app/views/auth/UI/email_sent.dart';
-import 'package:furniture_app/views/auth/UI/widgets/build_custom_field.dart';
-import 'package:furniture_app/views/auth/UI/widgets/build_continue_button.dart';
-import 'package:furniture_app/views/auth/UI/widgets/build_title.dart';
-import 'package:furniture_app/views/auth/UI/widgets/validate_field.dart';
-import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_state.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
+import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_state.dart';
 
 class ForgetPassword extends StatefulWidget {
   const ForgetPassword({super.key});
@@ -19,75 +17,105 @@ class ForgetPassword extends StatefulWidget {
 }
 
 class _ForgetPasswordState extends State<ForgetPassword> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    super.dispose();
-  }
+  final TextEditingController emailController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: BlocConsumer<AuthenticationCubit, AuthenticationState>(
-        listener: _authListener,
-        builder: (context, state) {
-          return state is PasswordResetLoading
-              ? const Center(child: CustomCircleProIndicator())
-              : _buildFormContent(context);
-        },
-      ),
+    return BlocConsumer<AuthenticationCubit, AuthenticationState>(
+      listener: (context, state) {
+        if (state is PasswordResetSuccess) {
+          naviagteTo(context, EmailSent());
+          showMsg(context, "Email was sent");
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              leading: IconButton(
+                  style: ButtonStyle(
+                      backgroundColor:
+                          WidgetStatePropertyAll(Color(0xfff4f4f4))),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(Icons.arrow_back)),
+            ),
+            body: state is PasswordResetLoading
+                ? CustomCircleProIndicator()
+                : Padding(
+                    padding: EdgeInsets.only(
+                      left: pxToSp(context, 24),
+                      right: pxToSp(context, 24),
+                      top: pxToSp(context, 30),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Forget Password",
+                              style: TextStyle(
+                                  color: AppColors.darkBrown,
+                                  fontSize: pxToSp(context, 32),
+                                  fontWeight: FontWeight.w700),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            TextFormField(
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "This field is required";
+                                }
+                                return null;
+                              },
+                              controller: emailController,
+                              decoration: InputDecoration(
+                                  filled: true,
+                                  labelText: "Enter Email Address",
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                      borderSide: BorderSide.none),
+                                  fillColor: const Color(0xfff4f4f4)),
+                              keyboardType: TextInputType.emailAddress,
+                            ),
+                            const SizedBox(height: 30),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  context
+                                      .read<AuthenticationCubit>()
+                                      .resetPasswords(
+                                          email: emailController.text);
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.darkBrown,
+                                  minimumSize: const Size(double.infinity, 50)),
+                              child: Text(
+                                "Continue",
+                                style: TextStyle(
+                                    fontSize: pxToSp(context, 20),
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ));
+      },
     );
   }
 
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      leading: IconButton(
-        style: const ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(Color(0xfff4f4f4)),
-        ),
-        onPressed: () => Navigator.pop(context),
-        icon: const Icon(Icons.arrow_back),
-      ),
-    );
-  }
-
-  void _authListener(BuildContext context, AuthenticationState state) {
-    if (state is PasswordResetSuccess) {
-      naviagteTo(context, EmailSent());
-      showMsg(context, "Email was sent");
-    }
-  }
-
-  Widget _buildFormContent(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            buildTitle(context, "Forgot Password"),
-            const SizedBox(height: 30),
-            buildCustomField(_emailController, validateField,
-                TextInputType.emailAddress, "Enter Email Address"),
-            const SizedBox(height: 30),
-            buildContinueButton(context, _submitForm),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      context.read<AuthenticationCubit>().resetPasswords(
-            email: _emailController.text,
-          );
-    }
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
   }
 }

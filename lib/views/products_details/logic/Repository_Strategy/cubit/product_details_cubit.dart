@@ -1,73 +1,99 @@
-// product_details_cubit.dart
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:furniture_app/views/products_details/logic/Repository_Strategy/cubit/product_details_state.dart';
+import 'dart:developer';
+
+import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
+import 'package:furniture_app/core/functions/api_services.dart';
 import 'package:furniture_app/views/products_details/logic/model/rate_model.dart';
-import 'package:furniture_app/views/products_details/logic/Repository_Strategy/product_repository.dart';
-import 'package:furniture_app/views/products_details/logic/Repository_Strategy/rate_calculation_strategy.dart';
+import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+part 'product_details_state.dart';
+
 class ProductDetailsCubit extends Cubit<ProductDetailsState> {
-  final ProductRepository _repository;
-  final RateCalculationStrategy _calculationStrategy;
-  final String userId;
+  ProductDetailsCubit() : super(ProductDetailsInitial());
+  final ApiServices _apiServices = ApiServices();
+  String userId = Supabase.instance.client.auth.currentUser!.id;
 
-  List<Rate> rates = [];
-
-  ProductDetailsCubit({
-    required ProductRepository repository,
-    RateCalculationStrategy? calculationStrategy,
-    String? userId,
-  })  : _repository = repository,
-        _calculationStrategy = calculationStrategy ?? SimpleRateCalculation(),
-        userId = userId ?? Supabase.instance.client.auth.currentUser!.id,
-        super(ProductDetailsInitial());
-
-  // Public methods
-  Future<void> loadRates(String productId) async {
-    emit(ProductDetailsLoading());
+  List<Rate> rates = []; //rate ==> int
+  int averageRate = 0;
+  int userRate = 0;
+  Future<void> getRates({required String productId}) async {
+    emit(GetRateLoading());
     try {
-      rates = await _repository.getRates(productId);
-      emit(RatesLoaded(
-        averageRate: _calculationStrategy.calculateAverage(rates),
-        userRate: _calculationStrategy.getUserRate(rates, userId),
-      ));
-    } catch (e) {
-      emit(ProductDetailsError('Failed to load ratings'));
-    }
-  }
-
-  Future<void> submitRating({
-    required String productId,
-    required int rating,
-  }) async {
-    emit(RateUpdateInProgress());
-    try {
-      final data = {
-        'rate': rating,
-        'user_id': userId,
-        'product_id': productId,
-      };
-
-      if (_calculationStrategy.userRateExists(rates, userId, productId)) {
-        await _repository.updateRate(productId, data);
-      } else {
-        await _repository.addRate(productId, data);
+      Response response = await _apiServices
+          .getData("rating_table?select=*&product_id=eq.$productId");
+      for (var rate in response.data) {
+        rates.add(Rate.fromJson(rate));
       }
+      _getAverageRate();
+      _getUserRate();
 
-      await loadRates(productId); // Refresh data
-      emit(RateUpdateSuccess());
+      emit(GetRateSuccess());
     } catch (e) {
-      emit(RateUpdateFailed('Failed to update rating'));
+      log(e.toString());
+      emit(GetRateError());
     }
   }
 
-  Future<void> submitComment(Map<String, dynamic> data) async {
-    emit(CommentSubmissionInProgress());
+  void _getUserRate() {
+    List<Rate> userRates = rates.where((Rate rate) {
+      return rate.userId == userId;
+    }).toList();
+    if (userRates.isNotEmpty) {
+      userRate = userRates[0].rate!;
+    }
+  }
+
+  void _getAverageRate() {
+    for (var userRate in rates) {
+      log(userRate.rate.toString());
+      if (userRate.rate != null) {
+        averageRate += userRate.rate!;
+      }
+    }
+    if (rates.isNotEmpty) {
+      averageRate = averageRate ~/ rates.length;
+    }
+  }
+
+  bool _isUserRateExist({required String productId}) {
+    for (var rate in rates) {
+      if ((rate.userId == userId) && (rate.productId == productId)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Future<void> addOrUpdateUserRate(
+      {required String productId, required Map<String, dynamic> data}) async {
+    //user rate exists ==> update for user rate
+    //user doesn't exist ==> add rate
+    String path =
+        "rating_table?select=*&user_id=eq.$userId&product_id=eq.$productId";
+    emit(AddOrUpdateRateLoading());
     try {
-      await _repository.addComment(data);
-      emit(CommentSubmissionSuccess());
+      if (_isUserRateExist(productId: productId)) {
+        //patch rate
+        await _apiServices.patchData(path, data);
+      } else {
+        //post rate
+        await _apiServices.postData(path, data);
+      }
+      emit(AddOrUpdateRateSuccess());
     } catch (e) {
-      emit(CommentSubmissionFailed('Failed to submit comment'));
+      log(e.toString());
+      emit(AddOrUpdateRateError());
+    }
+  }
+
+  Future<void> addComment({required Map<String, dynamic> data}) async {
+    emit(AddCommentLoading());
+    await _apiServices.postData("review_table", data);
+    emit(AddCommentSuccess());
+    try {} catch (e) {
+      log(e.toString());
+      emit(AddCommentError());
     }
   }
 }

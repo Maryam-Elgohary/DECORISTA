@@ -1,47 +1,24 @@
-// product_details_state.dart
-
-import 'package:flutter/material.dart';
+part of 'product_details_cubit.dart';
 
 @immutable
-abstract class ProductDetailsState {
-  const ProductDetailsState();
-}
+sealed class ProductDetailsState {}
 
-class ProductDetailsInitial extends ProductDetailsState {
-  const ProductDetailsInitial();
-}
+final class ProductDetailsInitial extends ProductDetailsState {}
 
-class ProductDetailsLoading extends ProductDetailsState {}
+final class GetRateLoading extends ProductDetailsState {}
 
-class RatesLoaded extends ProductDetailsState {
-  final int averageRate;
-  final int userRate;
+final class GetRateSuccess extends ProductDetailsState {}
 
-  const RatesLoaded({
-    required this.averageRate,
-    required this.userRate,
-  });
-}
+final class GetRateError extends ProductDetailsState {}
 
-class RateUpdateInProgress extends ProductDetailsState {}
+final class AddOrUpdateRateLoading extends ProductDetailsState {}
 
-class RateUpdateSuccess extends ProductDetailsState {}
+final class AddOrUpdateRateSuccess extends ProductDetailsState {}
 
-class RateUpdateFailed extends ProductDetailsState {
-  final String message;
-  const RateUpdateFailed(this.message);
-}
+final class AddOrUpdateRateError extends ProductDetailsState {}
 
-class CommentSubmissionInProgress extends ProductDetailsState {}
+final class AddCommentLoading extends ProductDetailsState {}
 
-class CommentSubmissionSuccess extends ProductDetailsState {}
+final class AddCommentSuccess extends ProductDetailsState {}
 
-class CommentSubmissionFailed extends ProductDetailsState {
-  final String message;
-  const CommentSubmissionFailed(this.message);
-}
-
-class ProductDetailsError extends ProductDetailsState {
-  final String message;
-  const ProductDetailsError(this.message);
-}
+final class AddCommentError extends ProductDetailsState {}
