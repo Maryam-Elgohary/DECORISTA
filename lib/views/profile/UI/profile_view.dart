@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
 import 'package:furniture_app/core/functions/navigate_without_back.dart';
+import 'package:furniture_app/core/functions/supabase_manager.dart';
 import 'package:furniture_app/views/auth/UI/sign_in.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/auth_repository.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
@@ -11,7 +12,6 @@ import 'package:furniture_app/views/profile/UI/widgets/profile_body.dart';
 import 'package:furniture_app/views/profile/UI/widgets/profile_list_content_class.dart';
 import 'package:furniture_app/views/profile/logic/models/userdata_model.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -65,7 +65,7 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    final authRepository = SupabaseAuthRepository(Supabase.instance.client);
+    final authRepository = SupabaseAuthRepository(SupabaseManager());
     return BlocProvider(
       create: (context) =>
           AuthenticationCubit(authRepository: authRepository)..getUserData(),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
+import 'package:furniture_app/core/functions/supabase_manager.dart';
 import 'package:furniture_app/views/auth/UI/sign_in.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_state.dart';
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthenticationCubit, AuthenticationState>(
       builder: (context, state) {
-        SupabaseClient client = Supabase.instance.client;
+        SupabaseClient client = SupabaseManager().client;
 
         return MaterialApp(
             debugShowCheckedModeBanner: false,

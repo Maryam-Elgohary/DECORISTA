@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:furniture_app/core/components/cubit/cubit/home_cubit.dart';
 import 'package:furniture_app/core/functions/api_services.dart';
 import 'package:furniture_app/core/functions/my_observer.dart';
+import 'package:furniture_app/core/functions/supabase_manager.dart'; // Import SupabaseManager
 import 'package:furniture_app/core/sensetive_data.dart';
 import 'package:furniture_app/my_app.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/auth_repository.dart';
@@ -14,21 +15,26 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Supabase (still required for SupabaseManager to work)
   await Supabase.initialize(
     url: url_supabase,
     anonKey: anonKey_supabase,
   );
 
   Bloc.observer = MyObserver();
-  final supabase = Supabase.instance.client;
-  // Create repository instance first
-  final authRepository = SupabaseAuthRepository(Supabase.instance.client);
-  // Create repository
-  final cartRepository = SupabaseCartRepository(ApiServices());
+
+  // Use SupabaseManager to get the Singleton SupabaseClient instance
+  final supabase = SupabaseManager();
+
+  // Create repository instances
+  final authRepository =
+      SupabaseAuthRepository(supabase); // Pass Singleton instance
+  final cartRepository = SupabaseCartRepository(
+      ApiServices()); // ApiServices is already a Singleton
+
   runApp(MultiBlocProvider(
     providers: [
       BlocProvider(
-        // Provide the repository when creating the cubit
         create: (context) =>
             AuthenticationCubit(authRepository: authRepository)..getUserData(),
       ),
@@ -36,10 +42,11 @@ void main() async {
         create: (context) => HomeCubit(),
       ),
       BlocProvider(
-          create: (context) => CartCubit(
-                cartRepository: cartRepository,
-                supabase: supabase,
-              ))
+        create: (context) => CartCubit(
+          cartRepository: cartRepository,
+          supabaseManager: supabase, // Pass Singleton instance
+        ),
+      ),
     ],
     child: const MyApp(),
   ));

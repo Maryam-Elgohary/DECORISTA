@@ -3,16 +3,16 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:furniture_app/core/functions/api_services.dart';
+import 'package:furniture_app/core/functions/supabase_manager.dart';
 import 'package:furniture_app/views/products_details/logic/model/rate_model.dart';
 import 'package:meta/meta.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'product_details_state.dart';
 
 class ProductDetailsCubit extends Cubit<ProductDetailsState> {
   ProductDetailsCubit() : super(ProductDetailsInitial());
   final ApiServices _apiServices = ApiServices();
-  String userId = Supabase.instance.client.auth.currentUser!.id;
+  String userId = SupabaseManager().client.auth.currentUser!.id;
 
   List<Rate> rates = []; //rate ==> int
   int averageRate = 0;

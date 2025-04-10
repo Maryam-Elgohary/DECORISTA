@@ -4,6 +4,7 @@ import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/functions/api_services.dart';
 import 'package:furniture_app/core/functions/navigate_to.dart';
 import 'package:furniture_app/core/functions/navigate_without_back.dart';
+import 'package:furniture_app/core/functions/supabase_manager.dart';
 import 'package:furniture_app/core/models/product_model.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/cart/UI/widgets/bottomsheet_container.dart';
@@ -13,7 +14,6 @@ import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20pat
 import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20patterns/cubit/cart_state.dart';
 import 'package:furniture_app/views/navbar/UI/main_home_view.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CartView extends StatefulWidget {
   const CartView({super.key});
@@ -30,7 +30,7 @@ class _CartViewState extends State<CartView> {
     return BlocProvider(
       create: (context) => CartCubit(
         cartRepository: SupabaseCartRepository(ApiServices()),
-        supabase: Supabase.instance.client,
+        supabaseManager: SupabaseManager(),
       )..getCartProducts(),
       child: BlocConsumer<CartCubit, CartState>(
         builder: (context, state) {

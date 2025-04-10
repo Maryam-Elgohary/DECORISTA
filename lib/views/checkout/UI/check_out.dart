@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/functions/build_appbar.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
+import 'package:furniture_app/core/functions/supabase_manager.dart';
 import 'package:furniture_app/views/checkout/UI/widgets/checkout_bottom_sheet.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CheckOut extends StatefulWidget {
   CheckOut({
@@ -39,7 +39,8 @@ class _CheckOutState extends State<CheckOut> {
   int _discountPercentage = 0; // Start with no discount
 
   Future<void> _fetchDiscount(String promocode) async {
-    final response = await Supabase.instance.client
+    final response = await SupabaseManager()
+        .client
         .from('offers_table')
         .select('discount_percentage')
         .eq('promocode', promocode)

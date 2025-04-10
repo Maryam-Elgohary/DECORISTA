@@ -5,6 +5,7 @@ import 'package:furniture_app/core/components/cubit/cubit/home_cubit.dart';
 import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
 import 'package:furniture_app/core/functions/navigate_without_back.dart';
+import 'package:furniture_app/core/functions/supabase_manager.dart';
 import 'package:furniture_app/core/models/product_model.dart';
 import 'package:furniture_app/views/products_details/UI/comments_list.dart';
 import 'package:furniture_app/views/products_details/UI/widgets/add_to_cart_button.dart';
@@ -16,7 +17,6 @@ import 'package:furniture_app/views/products_details/UI/widgets/product_details_
 import 'package:furniture_app/views/products_details/UI/widgets/product_details_under_image.dart';
 import 'package:furniture_app/views/products_details/logic/Repository_Strategy/cubit/product_details_cubit.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProductDetails extends StatefulWidget {
   const ProductDetails({super.key, required this.product, required this.isFav});
@@ -42,7 +42,7 @@ class _ProductDetailsViewState extends State<ProductDetails> {
 
   Future<void> fetchProductImages() async {
     try {
-      final supabase = Supabase.instance.client;
+      final supabase = SupabaseManager().client;
       final response = await supabase
           .from('product_image_table')
           .select('image_url, color')

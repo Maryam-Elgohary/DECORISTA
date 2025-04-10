@@ -1,4 +1,5 @@
 // auth_repository.dart
+import 'package:furniture_app/core/functions/supabase_manager.dart';
 import 'package:furniture_app/views/profile/logic/models/userdata_model.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -16,16 +17,16 @@ abstract class AuthRepository {
 }
 
 class SupabaseAuthRepository implements AuthRepository {
-  final SupabaseClient client;
+  final SupabaseManager _supabaseManager;
 
-  SupabaseAuthRepository(this.client);
+  SupabaseAuthRepository(this._supabaseManager);
 
   @override
-  String? getCurrentUserId() => client.auth.currentUser?.id;
+  String? getCurrentUserId() => _supabaseManager.client.auth.currentUser?.id;
 
   @override
   Future<AuthResponse> signInWithEmail(String email, String password) async {
-    return await client.auth.signInWithPassword(
+    return await _supabaseManager.client.auth.signInWithPassword(
       email: email,
       password: password,
     );
@@ -41,7 +42,7 @@ class SupabaseAuthRepository implements AuthRepository {
     if (googleUser == null) throw Exception('Google Sign-In cancelled');
 
     final googleAuth = await googleUser.authentication;
-    return await client.auth.signInWithIdToken(
+    return await _supabaseManager.client.auth.signInWithIdToken(
       provider: OAuthProvider.google,
       idToken: googleAuth.idToken!,
       accessToken: googleAuth.accessToken!,
@@ -51,7 +52,7 @@ class SupabaseAuthRepository implements AuthRepository {
   @override
   Future<AuthResponse> signUp(
       String email, String password, String fullName) async {
-    return await client.auth.signUp(
+    return await _supabaseManager.client.auth.signUp(
       email: email,
       password: password,
       data: {'full_name': fullName},
@@ -60,17 +61,17 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> signOut() async {
-    await client.auth.signOut();
+    await _supabaseManager.client.auth.signOut();
   }
 
   @override
   Future<void> resetPassword(String email) async {
-    await client.auth.resetPasswordForEmail(email);
+    await _supabaseManager.client.auth.resetPasswordForEmail(email);
   }
 
   @override
   Future<void> addUserData(String userId, String name, String email) async {
-    await client.from('users').upsert({
+    await _supabaseManager.client.from('users').upsert({
       'user_id': userId,
       'name': name,
       'email': email,
@@ -79,7 +80,10 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Future<UserDataModel?> getUserData(String userId) async {
-    final data = await client.from('users').select().eq('user_id', userId);
+    final data = await _supabaseManager.client
+        .from('users')
+        .select()
+        .eq('user_id', userId);
     if (data.isEmpty) return null;
 
     final nameParts = (data[0]['name'] as String).split(' ');

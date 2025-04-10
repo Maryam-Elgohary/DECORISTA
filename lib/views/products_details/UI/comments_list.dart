@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
+import 'package:furniture_app/core/functions/supabase_manager.dart';
 import 'package:furniture_app/core/models/product_model.dart';
 import 'package:furniture_app/views/products_details/UI/widgets/comments_list_listview.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CommentsList extends StatelessWidget {
   const CommentsList({super.key, required this.productModel});
@@ -11,7 +11,8 @@ class CommentsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: Supabase.instance.client
+        stream: SupabaseManager()
+            .client
             .from("review_table")
             .stream(primaryKey: ['review_id'])
             .eq("product_id", productModel.productId!)

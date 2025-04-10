@@ -2,23 +2,23 @@
 import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:furniture_app/core/functions/supabase_manager.dart';
 import 'package:furniture_app/core/models/product_model.dart';
 import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20patterns/cart_repository.dart';
 import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20patterns/cubit/cart_state.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CartCubit extends Cubit<CartState> {
   final CartRepository _cartRepository;
-  final SupabaseClient _supabase;
+  final SupabaseManager _supabaseManager;
 
   List<Products> cartProducts = [];
-  String? get userId => _supabase.auth.currentUser?.id;
+  String? get userId => _supabaseManager.client.auth.currentUser?.id;
 
   CartCubit({
     required CartRepository cartRepository,
-    required SupabaseClient supabase,
+    required SupabaseManager supabaseManager,
   })  : _cartRepository = cartRepository,
-        _supabase = supabase,
+        _supabaseManager = supabaseManager,
         super(CartInitial()) {
     _initialize();
   }
