@@ -9,11 +9,14 @@ import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
 import 'package:furniture_app/core/functions/navigate_to.dart';
 import 'package:furniture_app/core/functions/show_msg.dart';
 import 'package:furniture_app/views/auth/UI/sign_in.dart';
+import 'package:furniture_app/views/auth/UI/widgets/sign_up_widgets/auth_button.dart';
+import 'package:furniture_app/views/auth/UI/widgets/sign_up_widgets/auth_field.dart';
+import 'package:furniture_app/views/auth/UI/widgets/sign_up_widgets/sign_up_controller.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_state.dart';
 import 'package:furniture_app/views/navbar/UI/main_home_view.dart';
-import 'package:furniture_app/views/profile/logic/models/userdata_model.dart';
 
+// sign_up.dart
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
 
@@ -22,25 +25,81 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool isPasswordHidden = true;
+  final SignUpController _controller = SignUpController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleSignUp(BuildContext context) {
+    if (_controller.formKey.currentState!.validate()) {
+      context.read<AuthenticationCubit>().register(
+            firstName: _controller.firstName.text,
+            lastName: _controller.lastName.text,
+            email: _controller.email.text,
+            password: _controller.password.text,
+          );
+    }
+  }
+
+  void _handleGoogleSignIn(BuildContext context) {
+    context.read<AuthenticationCubit>().googleSignIn();
+  }
+
+  Widget _buildTitle(BuildContext context) {
+    return Text(
+      "Create Account",
+      style: TextStyle(
+        color: AppColors.darkBrown,
+        fontSize: pxToSp(context, 32),
+        fontWeight: FontWeight.w700,
+      ),
+    );
+  }
+
+  Widget _buildSignInRedirect(BuildContext context) {
+    return Center(
+      child: TextButton(
+        onPressed: () => naviagteTo(context, const SignIn()),
+        child: RichText(
+          text: TextSpan(children: [
+            TextSpan(
+              text: "Already have an account? ",
+              style: TextStyle(
+                color: const Color(0xff828A89),
+                fontSize: pxToSp(context, 16),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            TextSpan(
+              text: "Sign in",
+              style: TextStyle(
+                color: AppColors.darkBrown,
+                fontSize: pxToSp(context, 16),
+                fontWeight: FontWeight.w700,
+              ),
+            )
+          ]),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthenticationCubit, AuthenticationState>(
       listener: (context, state) {
         if (state is SignUpSuccess || state is GoogleSignInSuccess) {
-          UserDataModel userDataModel =
+          final userDataModel =
               context.read<AuthenticationCubit>().userDataModel!;
           Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => MainHomeView(
-                        userDataModel: userDataModel,
-                      )));
+            context,
+            MaterialPageRoute(
+              builder: (context) => MainHomeView(userDataModel: userDataModel),
+            ),
+          );
           log("Success");
         }
         if (state is SignUpError) {
@@ -48,226 +107,99 @@ class _SignUpState extends State<SignUp> {
         }
       },
       builder: (context, state) {
+        if (state is SignUpLoading) return const CustomCircleProIndicator();
+
         return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              leading: IconButton(
-                  style: const ButtonStyle(
-                      backgroundColor:
-                          WidgetStatePropertyAll(Color(0xfff4f4f4))),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.arrow_back)),
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            leading: IconButton(
+              style: const ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(Color(0xfff4f4f4)),
+              ),
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.arrow_back),
             ),
-            body: state is SignUpLoading
-                ? CustomCircleProIndicator()
-                : Padding(
-                    padding: EdgeInsets.only(
-                      left: pxToSp(context, 24),
-                      right: pxToSp(context, 24),
-                      top: pxToSp(context, 30),
+          ),
+          body: Padding(
+            padding: EdgeInsets.only(
+              left: pxToSp(context, 24),
+              right: pxToSp(context, 24),
+              top: pxToSp(context, 30),
+            ),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _controller.formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildTitle(context),
+                    const SizedBox(height: 20),
+                    AuthField(
+                      controller: _controller.firstName,
+                      labelText: "First Name",
+                      validator: (value) =>
+                          _controller.validateRequired(value, "First name"),
                     ),
-                    child: SingleChildScrollView(
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Create Account",
-                              style: TextStyle(
-                                  color: AppColors.darkBrown,
-                                  fontSize: pxToSp(context, 32),
-                                  fontWeight: FontWeight.w700),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            TextFormField(
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "This field is required";
-                                }
-                                return null;
-                              },
-                              controller: firstNameController,
-                              decoration: InputDecoration(
-                                  filled: true,
-                                  labelText: "First Name",
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                      borderSide: BorderSide.none),
-                                  fillColor: const Color(0xfff4f4f4)),
-                              keyboardType: TextInputType.name,
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            TextFormField(
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "This field is required";
-                                }
-                                return null;
-                              },
-                              controller: lastNameController,
-                              decoration: InputDecoration(
-                                  filled: true,
-                                  labelText: "Last Name",
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                      borderSide: BorderSide.none),
-                                  fillColor: const Color(0xfff4f4f4)),
-                              keyboardType: TextInputType.name,
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            TextFormField(
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "This field is required";
-                                }
-                                return null;
-                              },
-                              controller: emailController,
-                              decoration: InputDecoration(
-                                  filled: true,
-                                  labelText: "Email Address",
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                      borderSide: BorderSide.none),
-                                  fillColor: const Color(0xfff4f4f4)),
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            TextFormField(
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "This field is required";
-                                }
-                                return null;
-                              },
-                              controller: passwordController,
-                              decoration: InputDecoration(
-                                filled: true,
-                                labelText: "Password",
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                    borderSide: BorderSide.none),
-                                fillColor: const Color(0xfff4f4f4),
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      isPasswordHidden = !isPasswordHidden;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    isPasswordHidden
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: AppColors.darkBrown,
-                                  ),
-                                ),
-                              ),
-                              keyboardType: TextInputType.visiblePassword,
-                              obscureText: isPasswordHidden,
-                            ),
-                            const SizedBox(height: 20),
-                            ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  if (firstNameController.text.isEmpty ||
-                                      lastNameController.text.isEmpty ||
-                                      emailController.text.isEmpty ||
-                                      passwordController.text.isEmpty) {
-                                    // Show an error message or handle the empty fields case
-                                    return;
-                                  }
-                                  context.read<AuthenticationCubit>().register(
-                                        firstName: firstNameController.text,
-                                        lastName: lastNameController.text,
-                                        email: emailController.text,
-                                        password: passwordController.text,
-                                      );
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.darkBrown,
-                                  minimumSize: const Size(double.infinity, 50)),
-                              child: Text(
-                                "Continue",
-                                style: TextStyle(
-                                    fontSize: pxToSp(context, 20),
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                context
-                                    .read<AuthenticationCubit>()
-                                    .googleSignIn();
-                              },
-                              icon: const FaIcon(
-                                FontAwesomeIcons.google,
-                                size: 25,
-                                color: Colors.red,
-                              ),
-                              label: Padding(
-                                padding: const EdgeInsets.only(left: 5),
-                                child: Text(
-                                  "Continue With Google",
-                                  style: TextStyle(
-                                      fontSize: pxToSp(context, 20),
-                                      color: AppColors.darkBrown,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xfff4f4f4),
-                                  minimumSize: const Size(double.infinity, 50)),
-                            ),
-                            Center(
-                              child: TextButton(
-                                onPressed: () {
-                                  naviagteTo(context, const SignIn());
-                                },
-                                child: RichText(
-                                    text: TextSpan(children: [
-                                  TextSpan(
-                                      text: "Already have an account? ",
-                                      style: TextStyle(
-                                          color: const Color(0xff828A89),
-                                          fontSize: pxToSp(context, 16),
-                                          fontWeight: FontWeight.w500)),
-                                  TextSpan(
-                                    text: "Sign in",
-                                    style: TextStyle(
-                                        color: AppColors.darkBrown,
-                                        fontSize: pxToSp(context, 16),
-                                        fontWeight: FontWeight.w700),
-                                  )
-                                ])),
-                              ),
-                            ),
-                          ],
+                    const SizedBox(height: 20),
+                    AuthField(
+                      controller: _controller.lastName,
+                      labelText: "Last Name",
+                      validator: (value) =>
+                          _controller.validateRequired(value, "Last name"),
+                    ),
+                    const SizedBox(height: 20),
+                    AuthField(
+                      controller: _controller.email,
+                      labelText: "Email Address",
+                      keyboardType: TextInputType.emailAddress,
+                      validator: _controller.validateEmail,
+                    ),
+                    const SizedBox(height: 20),
+                    AuthField(
+                      controller: _controller.password,
+                      labelText: "Password",
+                      obscureText: _controller.isPasswordHidden,
+                      validator: (value) =>
+                          _controller.validateRequired(value, "Password"),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(_controller.togglePasswordVisibility);
+                        },
+                        icon: Icon(
+                          _controller.isPasswordHidden
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: AppColors.darkBrown,
                         ),
                       ),
                     ),
-                  ));
+                    const SizedBox(height: 20),
+                    AuthButton(
+                      onPressed: () => _handleSignUp(context),
+                      text: "Continue",
+                      backgroundColor: AppColors.darkBrown,
+                      textColor: Colors.white,
+                    ),
+                    const SizedBox(height: 15),
+                    AuthButton(
+                      onPressed: () => _handleGoogleSignIn(context),
+                      text: "Continue With Google",
+                      backgroundColor: const Color(0xfff4f4f4),
+                      textColor: AppColors.darkBrown,
+                      icon: const FaIcon(
+                        FontAwesomeIcons.google,
+                        size: 25,
+                        color: Colors.red,
+                      ),
+                    ),
+                    _buildSignInRedirect(context),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
       },
     );
-  }
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
   }
 }

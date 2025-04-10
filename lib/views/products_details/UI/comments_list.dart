@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
 import 'package:furniture_app/core/models/product_model.dart';
-import 'package:furniture_app/views/products_details/UI/user_comment.dart';
+import 'package:furniture_app/views/products_details/UI/widgets/comments_list_listview.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CommentsList extends StatelessWidget {
@@ -24,19 +23,7 @@ class CommentsList extends StatelessWidget {
               child: CustomCircleProIndicator(),
             );
           } else if (snapshot.hasData) {
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) => UserComment(
-                        commentData: data?[index],
-                      ),
-                  separatorBuilder: (context, index) => const Divider(
-                        color: AppColors.lightBeige,
-                      ),
-                  itemCount: data?.length ?? 0),
-            );
+            return comments_list_listview(data: data);
           } else if (!snapshot.hasData) {
             return Center(
               child: Text("No Reviews Yet"),

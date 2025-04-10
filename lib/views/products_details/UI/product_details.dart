@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/components/cubit/cubit/home_cubit.dart';
 import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
 import 'package:furniture_app/core/functions/navigate_without_back.dart';
 import 'package:furniture_app/core/models/product_model.dart';
-import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
-import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20patterns/cubit/cart_cubit.dart';
 import 'package:furniture_app/views/products_details/UI/comments_list.dart';
+import 'package:furniture_app/views/products_details/UI/widgets/add_to_cart_button.dart';
+import 'package:furniture_app/views/products_details/UI/widgets/product_details_arrow_back.dart';
+import 'package:furniture_app/views/products_details/UI/widgets/product_details_comments_part.dart';
+import 'package:furniture_app/views/products_details/UI/widgets/product_details_image.dart';
+import 'package:furniture_app/views/products_details/UI/widgets/product_details_reviews_text.dart';
+import 'package:furniture_app/views/products_details/UI/widgets/product_details_total_price.dart';
+import 'package:furniture_app/views/products_details/UI/widgets/product_details_under_image.dart';
 import 'package:furniture_app/views/products_details/logic/Repository_Strategy/cubit/product_details_cubit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -120,459 +124,194 @@ class _ProductDetailsViewState extends State<ProductDetails> {
               backgroundColor: Colors.white,
               body: state is GetRateLoading || state is AddCommentLoading
                   ? const CustomCircleProIndicator()
-                  : SingleChildScrollView(
-                      physics: BouncingScrollPhysics(),
-                      child: Column(
-                        children: [
-                          Stack(
-                            children: [
-                              Center(
-                                child: ClipRRect(
-                                  child: Image.network(
-                                    colorToImage[_selectedColor] ??
-                                        (widget.product.productImageTable
-                                                .isNotEmpty
-                                            ? widget.product.productImageTable
-                                                .first.imageUrl
-                                            : 'https://via.placeholder.com/150'),
-                                    fit: BoxFit.fill,
-                                    width: imageWidth,
-                                    height: imageHeight,
-                                  ),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () => Navigator.pop(context),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Icon(
-                                      Icons.arrow_back,
-                                      size: 30,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                right: 10,
-                                bottom: 20,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(
-                                        pxToSp(context, 40)),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black12,
-                                        blurRadius: 10,
-                                        spreadRadius: 2,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Column(
-                                      children: colorToImage.keys.map((color) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              _selectedColor = color;
-                                            });
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 5),
-                                            child: Container(
-                                              width: 35,
-                                              height: 35,
-                                              decoration: BoxDecoration(
-                                                color: color,
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                  color: _selectedColor == color
-                                                      ? Color(0xff9C9C9C)
-                                                      : Color(0xfff0f0f0),
-                                                  width: 4,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Align(
-                                  alignment: Alignment.topRight,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _isFav = !_isFav;
-                                      });
-
-                                      if (_isFav) {
-                                        homeCubit.addToFavorite(
-                                            widget.product.productId!);
-                                      } else {
-                                        homeCubit.removeFavorite(
-                                            widget.product.productId!);
-                                      }
-                                    },
-                                    icon: Icon(
-                                      _isFav
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      color: _isFav ? Colors.red : Colors.grey,
-                                      size: iconSize,
-                                    ),
-                                  )),
-                              // Align(
-                              //   alignment: Alignment.topRight,
-                              //   child: GestureDetector(
-                              //     onTap: () {
-                              //       if (isFavorite) {
-                              //         homeCubit.removeFavorite(
-                              //             widget.product.productId!);
-                              //       } else {
-                              //         homeCubit.addToFavorite(
-                              //             widget.product.productId!);
-                              //       }
-                              //     },
-                              //     child: Icon(
-                              //       isFavorite
-                              //           ? Icons.favorite
-                              //           : Icons.favorite_border,
-                              //       color:
-                              //           isFavorite ? Colors.red : Colors.grey,
-                              //       size: iconSize,
-                              //     ),
-                              //   ),
-                              // )
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: MediaQuery.of(context).size.width /
-                                          1.5,
-                                      child: Text(
-                                        "${widget.product.productName}",
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ),
-                                    widget.product.hasDiscount
-                                        ? Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "\$${widget.product.price.toStringAsFixed(2)}",
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  decoration: TextDecoration
-                                                      .lineThrough,
-                                                  color: AppColors.lightBrown,
-                                                ),
-                                              ),
-                                              Text(
-                                                "\$${widget.product.discountedPrice.toStringAsFixed(2)}",
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  color: AppColors.orangeColor,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        : Text(
-                                            "\$${widget.product.price.toStringAsFixed(2)}",
-                                            style: TextStyle(
-                                              color: AppColors.orangeColor,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          )
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Description",
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xffAB886D),
-                                      ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        Icon(Icons.star,
-                                            color: Colors.amber, size: 25),
-                                        SizedBox(width: 4),
-                                        Text(
-                                          "${cubit.averageRate}",
-                                          style: GoogleFonts.poppins(
-                                              color: AppColors.darkBrown,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                // const SizedBox(height: 10),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 5),
-                                  child: Text(
-                                    "${widget.product.description}",
-                                    style: GoogleFonts.poppins(
-                                        fontSize: 18, color: Color(0xffAB886D)),
-                                  ),
-                                ),
-                                Center(
-                                  child: RatingBar.builder(
-                                    initialRating: cubit.userRate.toDouble(),
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: false,
-                                    itemCount: 5,
-                                    itemPadding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0),
-                                    itemBuilder: (context, _) => const Icon(
-                                      Icons.star,
-                                      color: Colors.amber,
-                                    ),
-                                    onRatingUpdate: (rating) {
-                                      cubit.addOrUpdateUserRate(
-                                          productId: widget.product.productId!,
-                                          data: {
-                                            "rate": rating.toInt(),
-                                            "user_id": cubit.userId,
-                                            "product_id":
-                                                widget.product.productId
-                                          });
-                                    },
-                                  ),
-                                ),
-                                //   const SizedBox(height: 10),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 50,
-                                    child: Form(
-                                      key: _formKey,
-                                      child: TextFormField(
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return "This field is required";
-                                          }
-                                          return null;
-                                        },
-                                        controller: _commentController,
-                                        decoration: InputDecoration(
-                                          fillColor: Color(0xfff4f4f4),
-                                          border: OutlineInputBorder(
-                                              borderSide: BorderSide.none,
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          filled: true,
-                                          //hintText: "Add a review",
-                                          labelText: "Add a review",
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                SizedBox(
-                                  height: 50,
-                                  child: ElevatedButton.icon(
-                                      style: ElevatedButton.styleFrom(
-                                          //  minimumSize: Size(10, 55),
-                                          backgroundColor: AppColors.darkBrown,
-                                          foregroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10))),
-                                      onPressed: () async {
-                                        if (_formKey.currentState!.validate()) {
-                                          if (_commentController.text.isEmpty) {
-                                            // Show an error message or handle the empty fields case
-                                            return;
-                                          }
-                                          await context
-                                              .read<AuthenticationCubit>()
-                                              .getUserData();
-                                          await cubit.addComment(data: {
-                                            "comment": _commentController.text,
-                                            "user_id": cubit.userId,
-                                            "product_id":
-                                                widget.product.productId,
-                                            "user_name":
-                                                "${context.read<AuthenticationCubit>().userDataModel?.firstName} ${context.read<AuthenticationCubit>().userDataModel?.lastName}" ??
-                                                    "User Name"
-                                          });
-                                        }
-
-                                        _commentController.clear();
-                                      },
-                                      label: const Icon(
-                                        Icons.send,
-                                        size: 25,
-                                      )),
-                                )
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text("Reviews",
-                                  style: TextStyle(
-                                      color: AppColors.darkBrown,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: pxToSp(context, 16))),
-                            ),
-                          ),
-                          CommentsList(
-                            productModel: widget.product,
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.22,
-                          ),
-                        ],
-                      ),
-                    ),
-              bottomSheet: Container(
-                color: Colors.white,
-                padding: const EdgeInsets.all(20),
-                height: MediaQuery.of(context).size.height * 0.22,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: decreaseQuantity,
-                              icon: Icon(Icons.remove,
-                                  color: AppColors.darkBrown),
-                              style: IconButton.styleFrom(
-                                backgroundColor:
-                                    Color.fromARGB(255, 219, 219, 221),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              quantity.toString().padLeft(2, '0'),
-                              style: GoogleFonts.poppins(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            IconButton(
-                              onPressed: increaseQuantity,
-                              icon: Icon(Icons.add, color: Colors.white),
-                              style: IconButton.styleFrom(
-                                backgroundColor: AppColors.darkBrown,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          "\$${(widget.product.discountedPrice * quantity).toStringAsFixed(2)}",
-                          style: GoogleFonts.poppins(
-                              color: AppColors.darkBrown,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    ElevatedButton.icon(
-                      onPressed: state is AddToCartLoading
-                          ? null // Disable button while adding
-                          : () {
-                              final cartCubit = context.read<CartCubit>();
-
-                              // Check if the product is already in the cart
-                              if (cartCubit
-                                  .checkIsInCart(widget.product.productId)) {
-                                // Show a message if the product is already in the cart
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        Text("Product is already in the cart!"),
-                                  ),
-                                );
-                              } else {
-                                // If the product is not in the cart, add it
-                                final currentQuantity = quantity;
-
-                                cartCubit.addToCart(
-                                    widget.product.productId, currentQuantity);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        Text("Added to cart successfully!"),
-                                  ),
-                                );
-                              }
-                            },
-                      icon: Icon(Icons.shopping_cart, color: Colors.white),
-                      label: Text(
-                        "Add To Cart",
-                        style: GoogleFonts.poppins(fontSize: 18),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.darkBrown,
-                        foregroundColor: Colors.white,
-                        minimumSize: Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  : product_details_body(imageWidth, imageHeight, context,
+                      homeCubit, iconSize, cubit),
+              bottomSheet: product_details_bottom_sheet(context, state),
             ),
           );
         },
       ),
+    );
+  }
+
+  SingleChildScrollView product_details_body(
+      double imageWidth,
+      double imageHeight,
+      BuildContext context,
+      HomeCubit homeCubit,
+      double iconSize,
+      ProductDetailsCubit cubit) {
+    return SingleChildScrollView(
+      physics: BouncingScrollPhysics(),
+      child: Column(
+        children: [
+          product_details_stack(
+              imageWidth, imageHeight, context, homeCubit, iconSize),
+          product_details_under_image(widget: widget, cubit: cubit),
+          product_details_comments_part(
+              formKey: _formKey,
+              commentController: _commentController,
+              cubit: cubit,
+              widget: widget),
+          const SizedBox(height: 10),
+          product_details_reviews_text(),
+          CommentsList(
+            productModel: widget.product,
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.22,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Stack product_details_stack(double imageWidth, double imageHeight,
+      BuildContext context, HomeCubit homeCubit, double iconSize) {
+    return Stack(
+      children: [
+        product_details_image(
+            colorToImage: colorToImage,
+            selectedColor: _selectedColor,
+            widget: widget,
+            imageWidth: imageWidth,
+            imageHeight: imageHeight),
+        product_details_arrow_back(),
+        stack_positioned(context),
+        stack_fav_align(homeCubit, iconSize),
+      ],
+    );
+  }
+
+  Align stack_fav_align(HomeCubit homeCubit, double iconSize) {
+    return Align(
+        alignment: Alignment.topRight,
+        child: IconButton(
+          onPressed: () {
+            setState(() {
+              _isFav = !_isFav;
+            });
+
+            if (_isFav) {
+              homeCubit.addToFavorite(widget.product.productId!);
+            } else {
+              homeCubit.removeFavorite(widget.product.productId!);
+            }
+          },
+          icon: Icon(
+            _isFav ? Icons.favorite : Icons.favorite_border,
+            color: _isFav ? Colors.red : Colors.grey,
+            size: iconSize,
+          ),
+        ));
+  }
+
+  Positioned stack_positioned(BuildContext context) {
+    return Positioned(
+      right: 10,
+      bottom: 20,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(pxToSp(context, 40)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Column(
+            children: colorToImage.keys.map((color) {
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedColor = color;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Container(
+                    width: 35,
+                    height: 35,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: _selectedColor == color
+                            ? Color(0xff9C9C9C)
+                            : Color(0xfff0f0f0),
+                        width: 4,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container product_details_bottom_sheet(
+      BuildContext context, ProductDetailsState state) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.all(20),
+      height: MediaQuery.of(context).size.height * 0.22,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              product_details_quantity_controls(),
+              product_details_total_price(widget: widget, quantity: quantity),
+            ],
+          ),
+          const SizedBox(height: 10),
+          add_to_cart_button(
+            widget: widget,
+            quantity: quantity,
+            state: state,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Row product_details_quantity_controls() {
+    return Row(
+      children: [
+        IconButton(
+          onPressed: decreaseQuantity,
+          icon: Icon(Icons.remove, color: AppColors.darkBrown),
+          style: IconButton.styleFrom(
+            backgroundColor: Color.fromARGB(255, 219, 219, 221),
+          ),
+        ),
+        SizedBox(
+          width: 5,
+        ),
+        Text(
+          quantity.toString().padLeft(2, '0'),
+          style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(
+          width: 5,
+        ),
+        IconButton(
+          onPressed: increaseQuantity,
+          icon: Icon(Icons.add, color: Colors.white),
+          style: IconButton.styleFrom(
+            backgroundColor: AppColors.darkBrown,
+          ),
+        ),
+      ],
     );
   }
 

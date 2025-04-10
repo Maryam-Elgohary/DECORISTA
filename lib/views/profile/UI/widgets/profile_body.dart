@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_app/views/profile/UI/profile_view.dart';
 import 'package:furniture_app/views/profile/UI/widgets/profile_circle_avatar.dart';
 import 'package:furniture_app/views/profile/UI/widgets/profile_email.dart';
 import 'package:furniture_app/views/profile/UI/widgets/profile_list_content_class.dart';

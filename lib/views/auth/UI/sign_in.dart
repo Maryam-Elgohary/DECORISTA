@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
@@ -8,10 +7,14 @@ import 'package:furniture_app/core/functions/navigate_to.dart';
 import 'package:furniture_app/core/functions/show_msg.dart';
 import 'package:furniture_app/views/auth/UI/forget_password.dart';
 import 'package:furniture_app/views/auth/UI/sign_up.dart';
+import 'package:furniture_app/views/auth/UI/widgets/sign_in_widgets/auth_footer.dart';
+import 'package:furniture_app/views/auth/UI/widgets/sign_in_widgets/auth_google_button.dart';
+import 'package:furniture_app/views/auth/UI/widgets/sign_in_widgets/auth_header.dart';
+import 'package:furniture_app/views/auth/UI/widgets/sign_in_widgets/auth_text_field.dart';
+import 'package:furniture_app/views/auth/UI/widgets/sign_up_widgets/auth_button.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_state.dart';
 import 'package:furniture_app/views/navbar/UI/main_home_view.dart';
-import 'package:furniture_app/views/profile/logic/models/userdata_model.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -21,218 +24,126 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool isPasswordHidden = true;
+  bool _isPasswordHidden = true;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthenticationCubit, AuthenticationState>(
       listener: (context, state) {
         if (state is LoginSuccess || state is GoogleSignInSuccess) {
-          UserDataModel userDataModel =
+          final userDataModel =
               context.read<AuthenticationCubit>().userDataModel!;
           Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      MainHomeView(userDataModel: userDataModel)));
+            context,
+            MaterialPageRoute(
+              builder: (context) => MainHomeView(userDataModel: userDataModel),
+            ),
+          );
         }
         if (state is LoginError) {
           showMsg(context, state.message);
         }
       },
       builder: (context, state) {
-        AuthenticationCubit cubit = context.read<AuthenticationCubit>();
+        final cubit = context.read<AuthenticationCubit>();
+
+        if (state is LoginLoading) {
+          return const CustomCircleProIndicator();
+        }
+
         return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
+          appBar: AppBar(backgroundColor: Colors.transparent),
+          body: Padding(
+            padding: EdgeInsets.only(
+              left: pxToSp(context, 24),
+              right: pxToSp(context, 24),
+              top: pxToSp(context, 30),
             ),
-            body: state is LoginLoading
-                ? const CustomCircleProIndicator()
-                : Padding(
-                    padding: EdgeInsets.only(
-                      left: pxToSp(context, 24),
-                      right: pxToSp(context, 24),
-                      top: pxToSp(context, 30),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const AuthHeader(title: "Sign in"),
+                    const SizedBox(height: 20),
+                    AuthTextField(
+                      controller: _emailController,
+                      labelText: "Email Address",
+                      validator: (value) => value?.isEmpty ?? true
+                          ? "This field is required"
+                          : null,
+                      keyboardType: TextInputType.emailAddress,
                     ),
-                    child: SingleChildScrollView(
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Sign in",
-                              style: TextStyle(
-                                  color: AppColors.darkBrown,
-                                  fontSize: pxToSp(context, 32),
-                                  fontWeight: FontWeight.w700),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            TextFormField(
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "This field is required";
-                                }
-                                return null;
-                              },
-                              controller: emailController,
-                              decoration: InputDecoration(
-                                  filled: true,
-                                  labelText: "Email Address",
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                      borderSide: BorderSide.none),
-                                  fillColor: const Color(0xfff4f4f4)),
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            TextFormField(
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "This field is required";
-                                }
-                                return null;
-                              },
-                              controller: passwordController,
-                              decoration: InputDecoration(
-                                filled: true,
-                                labelText: "Password",
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                    borderSide: BorderSide.none),
-                                fillColor: const Color(0xfff4f4f4),
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      isPasswordHidden = !isPasswordHidden;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    isPasswordHidden
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: AppColors.darkBrown,
-                                  ),
-                                ),
-                              ),
-                              keyboardType: TextInputType.visiblePassword,
-                              obscureText: isPasswordHidden,
-                            ),
-
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: TextButton(
-                                onPressed: () {
-                                  naviagteTo(context, const ForgetPassword());
-                                },
-                                child: RichText(
-                                    text: TextSpan(children: [
-                                  TextSpan(
-                                      text: "Forgot password?",
-                                      style: TextStyle(
-                                          color: AppColors.darkBrown,
-                                          fontSize: pxToSp(context, 16),
-                                          fontWeight: FontWeight.w500)),
-                                  TextSpan(
-                                    text: " Reset",
-                                    style: TextStyle(
-                                        color: AppColors.darkBrown,
-                                        fontSize: pxToSp(context, 16),
-                                        fontWeight: FontWeight.w700),
-                                  )
-                                ])),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  cubit.login(
-                                      email: emailController.text,
-                                      password: passwordController.text);
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.darkBrown,
-                                  minimumSize: const Size(double.infinity, 50)),
-                              child: Text(
-                                "Continue",
-                                style: TextStyle(
-                                    fontSize: pxToSp(context, 20),
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                cubit.googleSignIn();
-                              },
-                              icon: const FaIcon(
-                                FontAwesomeIcons.google,
-                                size: 25,
-                                color: Colors.red,
-                              ),
-                              label: Padding(
-                                padding: const EdgeInsets.only(left: 5),
-                                child: Text(
-                                  "Continue With Google",
-                                  style: TextStyle(
-                                      fontSize: pxToSp(context, 20),
-                                      color: AppColors.darkBrown,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xfff4f4f4),
-                                  minimumSize: const Size(double.infinity, 50)),
-                            ),
-
-                            //  Spacer(),
-                            Center(
-                              child: TextButton(
-                                onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const SignUp())),
-                                child: RichText(
-                                    text: TextSpan(children: [
-                                  TextSpan(
-                                      text: "Don't have an account? ",
-                                      style: TextStyle(
-                                          color: AppColors.darkBrown,
-                                          fontSize: pxToSp(context, 16),
-                                          fontWeight: FontWeight.w500)),
-                                  TextSpan(
-                                    text: "Create one",
-                                    style: TextStyle(
-                                        color: AppColors.darkBrown,
-                                        fontSize: pxToSp(context, 16),
-                                        fontWeight: FontWeight.w700),
-                                  )
-                                ])),
-                              ),
-                            ),
-                          ],
+                    const SizedBox(height: 20),
+                    AuthTextField(
+                      controller: _passwordController,
+                      labelText: "Password",
+                      isPassword: true,
+                      isPasswordHidden: _isPasswordHidden,
+                      onTogglePasswordVisibility: () => setState(
+                          () => _isPasswordHidden = !_isPasswordHidden),
+                      validator: (value) => value?.isEmpty ?? true
+                          ? "This field is required"
+                          : null,
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () =>
+                            naviagteTo(context, const ForgetPassword()),
+                        child: AuthFooter(
+                          questionText: "Forgot password? ",
+                          actionText: "Reset",
+                          onPressed: () {
+                            naviagteTo(context, const ForgetPassword());
+                          },
                         ),
                       ),
                     ),
-                  ));
+                    const SizedBox(height: 10),
+                    AuthButton(
+                      text: "Continue",
+                      onPressed: () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          cubit.login(
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                          );
+                        }
+                      },
+                      backgroundColor: AppColors.darkBrown,
+                      textColor: Colors.white,
+                    ),
+                    const SizedBox(height: 20),
+                    AuthGoogleButton(
+                      onPressed: () => cubit.googleSignIn(),
+                    ),
+                    const SizedBox(height: 10),
+                    Center(
+                      child: AuthFooter(
+                        questionText: "Don't have an account? ",
+                        actionText: "Create one",
+                        onPressed: () => naviagteTo(context, const SignUp()),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
       },
     );
-  }
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
   }
 }

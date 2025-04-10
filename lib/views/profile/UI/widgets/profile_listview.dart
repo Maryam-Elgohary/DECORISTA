@@ -16,21 +16,19 @@ class profile_listview extends StatelessWidget {
     return ListView.builder(
       itemCount: profileListContent.length,
       itemBuilder: (context, index) {
-        return Expanded(
-          child: ListTile(
-            leading: profile_listtile_leading(
-              profileListContent: profileListContent,
-              index: index,
-            ),
-            title: profile_listtile_title(
-                profileListContent: profileListContent, index: index),
-            trailing: profile_listtile_trailing(),
-            onTap: () async {
-              if (index == 4) {
-                await context.read<AuthenticationCubit>().signOut();
-              }
-            },
+        return ListTile(
+          leading: profile_listtile_leading(
+            profileListContent: profileListContent,
+            index: index,
           ),
+          title: profile_listtile_title(
+              profileListContent: profileListContent, index: index),
+          trailing: profile_listtile_trailing(),
+          onTap: () async {
+            if (index == 4) {
+              await context.read<AuthenticationCubit>().signOut();
+            }
+          },
         );
       },
     );

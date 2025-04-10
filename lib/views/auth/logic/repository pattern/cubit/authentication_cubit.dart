@@ -1,7 +1,9 @@
 // authentication_cubit.dart
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
-import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_state.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/auth_repository.dart';
+import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_state.dart';
 import 'package:furniture_app/views/profile/logic/models/userdata_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -70,12 +72,13 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   }
 
   Future<void> signOut() async {
-    emit(LoginLoading());
+    emit(LogoutLoading());
     try {
       await _authRepository.signOut();
       userDataModel = null;
       emit(LogoutSuccess());
     } catch (e) {
+      log(e.toString());
       emit(LogoutError());
     }
   }

@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
-import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
 import 'package:furniture_app/core/functions/navigate_to.dart';
 import 'package:furniture_app/core/functions/show_msg.dart';
 import 'package:furniture_app/views/auth/UI/email_sent.dart';
+import 'package:furniture_app/views/auth/UI/widgets/forget_password_widgets/auth_back_button.dart';
+import 'package:furniture_app/views/auth/UI/widgets/sign_in_widgets/auth_header.dart';
+import 'package:furniture_app/views/auth/UI/widgets/sign_in_widgets/auth_text_field.dart';
+import 'package:furniture_app/views/auth/UI/widgets/sign_up_widgets/auth_button.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_state.dart';
 
@@ -17,8 +20,14 @@ class ForgetPassword extends StatefulWidget {
 }
 
 class _ForgetPasswordState extends State<ForgetPassword> {
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,91 +40,57 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       },
       builder: (context, state) {
         return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              leading: IconButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStatePropertyAll(Color(0xfff4f4f4))),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(Icons.arrow_back)),
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            leading: AuthBackButton(
+              onPressed: () => Navigator.pop(context),
             ),
-            body: state is PasswordResetLoading
-                ? CustomCircleProIndicator()
-                : Padding(
-                    padding: EdgeInsets.only(
-                      left: pxToSp(context, 24),
-                      right: pxToSp(context, 24),
-                      top: pxToSp(context, 30),
-                    ),
-                    child: SingleChildScrollView(
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Forget Password",
-                              style: TextStyle(
-                                  color: AppColors.darkBrown,
-                                  fontSize: pxToSp(context, 32),
-                                  fontWeight: FontWeight.w700),
-                            ),
-                            SizedBox(
-                              height: 30,
-                            ),
-                            TextFormField(
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "This field is required";
-                                }
-                                return null;
-                              },
-                              controller: emailController,
-                              decoration: InputDecoration(
-                                  filled: true,
-                                  labelText: "Enter Email Address",
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                      borderSide: BorderSide.none),
-                                  fillColor: const Color(0xfff4f4f4)),
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                            const SizedBox(height: 30),
-                            ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  context
-                                      .read<AuthenticationCubit>()
-                                      .resetPasswords(
-                                          email: emailController.text);
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.darkBrown,
-                                  minimumSize: const Size(double.infinity, 50)),
-                              child: Text(
-                                "Continue",
-                                style: TextStyle(
-                                    fontSize: pxToSp(context, 20),
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                          ],
-                        ),
+          ),
+          body: state is PasswordResetLoading
+              ? const CustomCircleProIndicator()
+              : Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 30,
+                  ),
+                  child: SingleChildScrollView(
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const AuthHeader(title: "Forget Password"),
+                          const SizedBox(height: 30),
+                          AuthTextField(
+                            controller: _emailController,
+                            labelText: "Enter Email Address",
+                            validator: (value) => value?.isEmpty ?? true
+                                ? "This field is required"
+                                : null,
+                            keyboardType: TextInputType.emailAddress,
+                          ),
+                          const SizedBox(height: 30),
+                          AuthButton(
+                            text: "Continue",
+                            onPressed: () {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                context
+                                    .read<AuthenticationCubit>()
+                                    .resetPasswords(
+                                      email: _emailController.text,
+                                    );
+                              }
+                            },
+                            backgroundColor: AppColors.darkBrown,
+                            textColor: Colors.white,
+                          ),
+                        ],
                       ),
                     ),
-                  ));
+                  ),
+                ),
+        );
       },
     );
-  }
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    super.dispose();
   }
 }

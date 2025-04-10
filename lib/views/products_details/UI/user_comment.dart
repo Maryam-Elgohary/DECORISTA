@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:furniture_app/core/app_colors.dart';
+import 'package:furniture_app/views/products_details/UI/widgets/user_comment_content.dart';
 
 class UserComment extends StatelessWidget {
   const UserComment({
@@ -34,21 +34,7 @@ class UserComment extends StatelessWidget {
         SizedBox(
           width: 10,
         ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              commentData?["user_name"] ?? "User Name",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, color: AppColors.darkBrown),
-            ),
-            Text(
-              commentData?["comment"] ?? "comment",
-              style: TextStyle(color: AppColors.darkBrown),
-            ),
-          ],
-        ),
+        product_details_comment_content(commentData: commentData),
       ],
     );
   }

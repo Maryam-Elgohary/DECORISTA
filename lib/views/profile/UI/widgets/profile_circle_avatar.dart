@@ -14,7 +14,7 @@ class profile_circle_avatar extends StatelessWidget {
       backgroundColor: getRandomColor(),
       radius: 50,
       child: Text(
-        user!.firstName[0],
+        user?.firstName[0] != null ? user!.firstName[0] : " ",
         style: const TextStyle(fontSize: 50),
       ),
     );

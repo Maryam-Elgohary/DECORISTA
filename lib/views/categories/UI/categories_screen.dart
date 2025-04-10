@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:furniture_app/core/functions/build_appbar.dart';
 import 'package:furniture_app/core/functions/navigate_to.dart';
 import 'package:furniture_app/views/categories/UI/selected_category.dart';
+import 'package:furniture_app/views/categories/UI/widgets/category_listtile_leading.dart';
+import 'package:furniture_app/views/categories/UI/widgets/category_listtile_title.dart';
+import 'package:furniture_app/views/categories/UI/widgets/category_listtile_trailing.dart';
 import 'package:furniture_app/views/categories/cubit/cubit/category_cubit.dart';
 
 class CategoriesScreen extends StatelessWidget {
@@ -42,24 +45,13 @@ class CategoriesScreen extends StatelessWidget {
                       ],
                     ),
                     child: ListTile(
-                      leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network("${category['image_url']}",
-                            width: 60, height: 80, fit: BoxFit.cover),
-                      ),
-                      title: Text(category['name'],
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold)),
+                      leading: category_listtile_leading(category: category),
+                      title: category_listtile_title(category: category),
                       // subtitle: Text(
                       //     "${context.read<HomeCubit>().categoryProductsCount} products"),
-                      trailing: const Icon(Icons.arrow_forward_ios,
-                          size: 18, color: Colors.grey),
+                      trailing: category_listtile_trailing(),
                       onTap: () {
-                        naviagteTo(
-                            context,
-                            SelectedCategory(
-                              title: category['name'],
-                            ));
+                        navigate_to_selected_category(context, category);
                       },
                     ),
                   );
@@ -72,5 +64,14 @@ class CategoriesScreen extends StatelessWidget {
       ),
       backgroundColor: Colors.grey[100],
     );
+  }
+
+  Future<dynamic> navigate_to_selected_category(
+      BuildContext context, Map<String, dynamic> category) {
+    return naviagteTo(
+        context,
+        SelectedCategory(
+          title: category['name'],
+        ));
   }
 }
