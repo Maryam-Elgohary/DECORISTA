@@ -19,7 +19,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: '$url_supabase',
+    url: url_supabase,
     anonKey: anonKey_supabase,
   );
 
