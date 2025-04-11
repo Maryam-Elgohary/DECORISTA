@@ -14,7 +14,7 @@ class CategoriesScreen extends StatelessWidget {
     return Scaffold(
       appBar: buildCustomAppBar(context, "Categories"),
       body: BlocProvider(
-        create: (context) => CategoryCubit()..fetchCategories(),
+        create: (context) => CategoryCubit()..subscribeToCategories(),
         child: BlocBuilder<CategoryCubit, CategoryState>(
           builder: (context, state) {
             if (state is CategoryLoading) {
