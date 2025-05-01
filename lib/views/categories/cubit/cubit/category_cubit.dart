@@ -13,7 +13,6 @@ class CategoryCubit extends Cubit<CategoryState> {
 
   // Subscription to real-time changes
   RealtimeChannel? _realtimeChannel;
-
   /// Fetches initial categories from Supabase.
   Future<void> fetchCategories() async {
     emit(CategoryLoading());
@@ -81,3 +80,4 @@ class CategoryCubit extends Cubit<CategoryState> {
     return super.close();
   }
 }
+
