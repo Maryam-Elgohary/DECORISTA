@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
-import 'package:furniture_app/views/products%20card/UI/products_card.dart';
+import 'package:furniture_app/views/products_card/UI/products_card.dart';
 
 class products_card_name_part extends StatelessWidget {
   const products_card_name_part({

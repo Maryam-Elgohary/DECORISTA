@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:furniture_app/core/app_colors.dart';
-import 'package:furniture_app/core/components/products_list.dart';
+import 'package:furniture_app/views/products_list/UI/products_list.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
 import 'package:furniture_app/views/categories/cubit/cubit/category_cubit.dart';
 

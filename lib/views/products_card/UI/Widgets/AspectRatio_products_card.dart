@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_app/views/products%20card/UI/Widgets/children_stack.dart';
-import 'package:furniture_app/views/products%20card/UI/Widgets/positioned_stack.dart';
-import 'package:furniture_app/views/products%20card/UI/products_card.dart';
+import 'package:furniture_app/views/products_card/UI/Widgets/children_stack.dart';
+import 'package:furniture_app/views/products_card/UI/Widgets/positioned_stack.dart';
+import 'package:furniture_app/views/products_card/UI/products_card.dart';
 
 class AspectRatio_products_card extends StatelessWidget {
   const AspectRatio_products_card({

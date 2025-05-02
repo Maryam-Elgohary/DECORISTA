@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_app/core/models/product_model.dart';
-import 'package:furniture_app/views/products%20card/UI/Widgets/Layout_builder_products_card.dart';
+import 'package:furniture_app/views/products_card/UI/Widgets/Layout_builder_products_card.dart';
 
 class ProductsCard extends StatefulWidget {
   const ProductsCard({

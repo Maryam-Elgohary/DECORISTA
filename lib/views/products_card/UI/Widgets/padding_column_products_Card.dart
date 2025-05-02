@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_app/views/products%20card/UI/Widgets/AspectRatio_products_card.dart';
-import 'package:furniture_app/views/products%20card/UI/Widgets/price_and_button_row.dart';
-import 'package:furniture_app/views/products%20card/UI/Widgets/products_card_name_part.dart';
-import 'package:furniture_app/views/products%20card/UI/products_card.dart';
+import 'package:furniture_app/views/products_card/UI/Widgets/AspectRatio_products_card.dart';
+import 'package:furniture_app/views/products_card/UI/Widgets/price_and_button_row.dart';
+import 'package:furniture_app/views/products_card/UI/Widgets/products_card_name_part.dart';
+import 'package:furniture_app/views/products_card/UI/products_card.dart';
 
 class padding_column_products_Card extends StatelessWidget {
   const padding_column_products_Card({

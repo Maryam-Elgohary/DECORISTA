@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_app/core/models/product_model.dart';
-import 'package:furniture_app/views/products%20card/UI/Widgets/Arrow_button_products_card.dart';
-import 'package:furniture_app/views/products%20card/UI/Widgets/price_column_products_card.dart';
-import 'package:furniture_app/views/products%20card/UI/Widgets/price_hasDiscount_column.dart';
-import 'package:furniture_app/views/products%20card/UI/products_card.dart';
+import 'package:furniture_app/views/products_card/UI/Widgets/Arrow_button_products_card.dart';
+import 'package:furniture_app/views/products_card/UI/Widgets/price_column_products_card.dart';
+import 'package:furniture_app/views/products_card/UI/Widgets/price_hasDiscount_column.dart';
+import 'package:furniture_app/views/products_card/UI/products_card.dart';
 
 class price_and_button_row extends StatelessWidget {
   const price_and_button_row({

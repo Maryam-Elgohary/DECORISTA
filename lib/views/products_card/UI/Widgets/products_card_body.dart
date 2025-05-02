@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:furniture_app/views/products%20card/UI/Widgets/padding_column_products_Card.dart';
-import 'package:furniture_app/views/products%20card/UI/products_card.dart';
+import 'package:furniture_app/views/products_card/UI/Widgets/padding_column_products_Card.dart';
+import 'package:furniture_app/views/products_card/UI/products_card.dart';
 
 class products_card_body extends StatelessWidget {
   const products_card_body({

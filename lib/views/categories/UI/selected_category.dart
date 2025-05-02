@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_app/core/components/products_list.dart';
+import 'package:furniture_app/views/products_list/UI/products_list.dart';
 import 'package:furniture_app/core/functions/build_appbar.dart';
 
 class SelectedCategory extends StatefulWidget {
