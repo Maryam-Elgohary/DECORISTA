@@ -3,7 +3,11 @@ import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/components/build_appbar.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
 import 'package:furniture_app/core/functions/supabase_manager.dart';
+import 'package:furniture_app/views/checkout/UI/widgets/PromoCodeField.dart';
+import 'package:furniture_app/views/checkout/UI/widgets/ShippingToSection.dart';
+import 'package:furniture_app/views/checkout/UI/widgets/address_data.dart';
 import 'package:furniture_app/views/checkout/UI/widgets/checkout_bottom_sheet.dart';
+import 'package:furniture_app/views/checkout/UI/widgets/payment_methods_data.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CheckOut extends StatefulWidget {
@@ -23,19 +27,6 @@ class _CheckOutState extends State<CheckOut> {
   int selectedAddressIndex = 0;
   int selectedPaymentMethod = 0;
 
-  List<Map<String, String>> addresses = [
-    {
-      "title": "Home Address",
-      "phone": "(269) 444-6853",
-      "street": "Road Number"
-    },
-  ];
-
-  List<Map<String, String>> paymentMethods = [
-    {"title": "Credit Card", "icon": "assets/credit_card.png"},
-    {"title": "Paypal", "icon": "assets/paypal.png"},
-    {"title": "Apple Pay", "icon": "assets/apple_pay.png"},
-  ];
   int _discountPercentage = 0; // Start with no discount
 
   Future<void> _fetchDiscount(String promocode) async {
@@ -85,66 +76,27 @@ class _CheckOutState extends State<CheckOut> {
           EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.35),
       child: Column(
         children: [
-          checkout_shipping_to(context),
+          ShippingToSection(
+            addresses: addresses,
+            onEditPressed: (index) {
+              // Handle edit address action
+            },
+          ),
           const SizedBox(height: 20),
           checkout_payment_methods(),
           const SizedBox(height: 20),
-          checkout_promocode(_promoCodeController, totalPayment),
+          PromoCodeField(
+            controller: _promoCodeController,
+            onApplyPressed: () {
+              String promoCode = _promoCodeController.text;
+              if (promoCode.isNotEmpty) {
+                _fetchDiscount(promoCode);
+              }
+            },
+          ),
           SizedBox(
             height: 10,
           )
-        ],
-      ),
-    );
-  }
-
-  Padding checkout_shipping_to(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Shipping To",
-              style: GoogleFonts.poppins(
-                  color: AppColors.darkBrown,
-                  fontWeight: FontWeight.w600,
-                  fontSize: pxToSp(context, 20))),
-          const SizedBox(height: 10),
-          Column(
-            children: List.generate(addresses.length, (index) {
-              return Card(
-                color: Colors.white,
-                margin: const EdgeInsets.symmetric(vertical: 5),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: ListTile(
-                  title: Text(
-                    addresses[index]["title"]!,
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        addresses[index]["phone"]!,
-                        style: TextStyle(color: Color(0xff828A89)),
-                      ),
-                      Text(addresses[index]["street"]!,
-                          style: TextStyle(color: Color(0xff828A89))),
-                    ],
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.grey),
-                    onPressed: () {
-                      // Handle edit address
-                    },
-                  ),
-                ),
-              );
-            }),
-          ),
         ],
       ),
     );
@@ -199,66 +151,6 @@ class _CheckOutState extends State<CheckOut> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Padding checkout_promocode(
-      TextEditingController _promoCodeController, double totalPayment) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Promo Code",
-            style: GoogleFonts.poppins(
-              fontSize: 16, // Replace pxToSp(context, 20) if needed
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _promoCodeController,
-            decoration: InputDecoration(
-              hintText: "Promo code",
-              hintStyle: GoogleFonts.poppins(color: Colors.grey),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              suffixIcon: Padding(
-                padding: const EdgeInsets.only(right: 6, top: 6, bottom: 6),
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _fetchDiscount(_promoCodeController.text);
-                      totalPayment;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.darkBrown,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                  ),
-                  child: Text(
-                    "Apply",
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
