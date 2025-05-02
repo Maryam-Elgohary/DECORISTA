@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
-import 'package:furniture_app/core/functions/navigate_without_back.dart';
+import 'package:furniture_app/core/components/navigate_without_back.dart';
 import 'package:furniture_app/core/functions/supabase_manager.dart';
 import 'package:furniture_app/views/auth/UI/sign_in.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/auth_repository.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:furniture_app/core/components/cubit/cubit/home_cubit.dart';
+import 'package:furniture_app/views/home/UI/cubit/cubit/home_cubit.dart';
 import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
 import 'package:furniture_app/core/models/product_model.dart';
 import 'package:furniture_app/views/products_list/UI/Widgets/gridview_products_list.dart';

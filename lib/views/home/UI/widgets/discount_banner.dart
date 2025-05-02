@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
-import 'package:furniture_app/core/functions/navigate_to.dart';
+import 'package:furniture_app/core/components/navigate_to.dart';
 import 'package:furniture_app/views/special_offers/UI/special_offers_view.dart';
 
 class DiscountBanner extends StatelessWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_app/core/components/cubit/cubit/home_cubit.dart';
+import 'package:furniture_app/views/home/UI/cubit/cubit/home_cubit.dart';
 import 'package:furniture_app/views/products_details/UI/product_details.dart';
 import 'package:furniture_app/views/products_details/UI/widgets/color_selector.dart';
 import 'package:furniture_app/views/products_details/UI/widgets/favorite_button.dart';

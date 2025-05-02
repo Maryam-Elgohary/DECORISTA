@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
-import 'package:furniture_app/core/functions/navigate_to.dart';
+import 'package:furniture_app/core/components/navigate_to.dart';
 import 'package:furniture_app/views/checkout/UI/check_out.dart';
 import 'package:google_fonts/google_fonts.dart';
 

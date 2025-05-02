@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
-import 'package:furniture_app/core/functions/build_appbar.dart';
+import 'package:furniture_app/core/components/build_appbar.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
 import 'package:furniture_app/core/functions/supabase_manager.dart';
 import 'package:furniture_app/views/checkout/UI/widgets/checkout_bottom_sheet.dart';

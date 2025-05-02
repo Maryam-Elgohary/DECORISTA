@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:furniture_app/core/app_colors.dart';
-import 'package:furniture_app/core/components/cubit/cubit/home_cubit.dart';
+import 'package:furniture_app/views/home/UI/cubit/cubit/home_cubit.dart';
 import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20patterns/cubit/cart_cubit.dart';
 import 'package:furniture_app/views/products_details/UI/product_details.dart';
 import 'package:furniture_app/views/products_details/logic/Repository_Strategy/cubit/product_details_cubit.dart';

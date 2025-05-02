@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:furniture_app/core/components/cubit/cubit/home_cubit.dart';
+import 'package:furniture_app/views/home/UI/cubit/cubit/home_cubit.dart';
 import 'package:furniture_app/core/functions/api_services.dart';
 import 'package:furniture_app/core/functions/my_observer.dart';
 import 'package:furniture_app/core/functions/supabase_manager.dart'; // Import SupabaseManager

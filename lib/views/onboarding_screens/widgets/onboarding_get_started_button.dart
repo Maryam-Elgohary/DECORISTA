@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
-import 'package:furniture_app/core/functions/navigate_without_back.dart';
+import 'package:furniture_app/core/components/navigate_without_back.dart';
 import 'package:furniture_app/views/auth/UI/sign_in.dart';
 
 class onboarding_get_started_button extends StatelessWidget {

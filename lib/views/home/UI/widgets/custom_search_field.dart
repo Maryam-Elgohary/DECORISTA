@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_app/core/app_colors.dart';
 import 'package:furniture_app/core/functions/convert_px_to_dp.dart';
-import 'package:furniture_app/core/functions/navigate_to.dart';
+import 'package:furniture_app/core/components/navigate_to.dart';
 import 'package:furniture_app/views/home/UI/search_view.dart';
 
 class CustomSearchField extends StatefulWidget {

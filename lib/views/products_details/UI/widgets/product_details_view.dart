@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:furniture_app/core/components/cubit/cubit/home_cubit.dart';
+import 'package:furniture_app/views/home/UI/cubit/cubit/home_cubit.dart';
 import 'package:furniture_app/core/components/custom_circle_pro_indicator.dart';
-import 'package:furniture_app/core/functions/navigate_without_back.dart';
+import 'package:furniture_app/core/components/navigate_without_back.dart';
 import 'package:furniture_app/core/models/product_model.dart';
 import 'package:furniture_app/views/products_details/UI/product_details.dart';
 import 'package:furniture_app/views/products_details/UI/widgets/ProductDetailsBottomSheet.dart';

@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_paymob_egypt/flutter_paymob_egypt.dart';
 import 'package:furniture_app/core/app_colors.dart';
-import 'package:furniture_app/core/functions/navigate_to.dart';
+import 'package:furniture_app/core/components/navigate_to.dart';
 import 'package:furniture_app/core/sensetive_data.dart';
 import 'package:furniture_app/views/checkout/UI/success_payment.dart';
 import 'package:google_fonts/google_fonts.dart';

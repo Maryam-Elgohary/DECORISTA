@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:furniture_app/core/functions/build_appbar.dart';
-import 'package:furniture_app/core/functions/navigate_to.dart';
+import 'package:furniture_app/core/components/build_appbar.dart';
+import 'package:furniture_app/core/components/navigate_to.dart';
 import 'package:furniture_app/views/categories/UI/selected_category.dart';
 import 'package:furniture_app/views/categories/UI/widgets/category_listtile_leading.dart';
 import 'package:furniture_app/views/categories/UI/widgets/category_listtile_title.dart';
