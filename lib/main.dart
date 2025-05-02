@@ -10,6 +10,7 @@ import 'package:furniture_app/views/auth/logic/repository%20pattern/auth_reposit
 import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20patterns/cart_repository.dart';
 import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20patterns/cubit/cart_cubit.dart';
+import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20patterns/supabase_cart_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {

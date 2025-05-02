@@ -9,9 +9,9 @@ import 'package:furniture_app/core/models/product_model.dart';
 import 'package:furniture_app/views/auth/logic/repository%20pattern/cubit/authentication_cubit.dart';
 import 'package:furniture_app/views/cart/UI/widgets/bottomsheet_container.dart';
 import 'package:furniture_app/views/cart/UI/widgets/cart_body.dart';
-import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20patterns/cart_repository.dart';
 import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20patterns/cubit/cart_cubit.dart';
 import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20patterns/cubit/cart_state.dart';
+import 'package:furniture_app/views/cart/logic/repository%20and%20strategy%20patterns/supabase_cart_repository.dart';
 import 'package:furniture_app/views/navbar/UI/main_home_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 

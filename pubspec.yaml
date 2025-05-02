@@ -54,6 +54,7 @@ dependencies:
   google_sign_in: ^6.2.2
   flutter_paymob_egypt: ^0.0.9
   app_links: ^6.4.0
+  equatable: ^2.0.7
 flutter_native_splash:
   color: "#493628"
   image: assets/logo_1.png

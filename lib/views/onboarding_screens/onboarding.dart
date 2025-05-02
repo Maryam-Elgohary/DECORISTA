@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:furniture_app/views/onboarding_screens/widgets/onboarding_data.dart';
 import 'package:furniture_app/views/onboarding_screens/widgets/onboarding_image_text.dart';
 import 'package:furniture_app/views/onboarding_screens/widgets/onboarding_skip_next_button.dart';
 import 'package:furniture_app/views/onboarding_screens/widgets/onboarding_smooth_page_indicator.dart';
@@ -13,21 +14,7 @@ class OnBoarding extends StatefulWidget {
 class _OnBoardingState extends State<OnBoarding> {
   final PageController _controller = PageController();
   int currentIndex = 0; //track current page index
-  final List<Map<String, String>> onboardingData = [
-    {
-      "image": "assets/onboarding_1.png",
-      "text": "Discover a World of Elegant Furniture That Match Your Style."
-    },
-    {
-      "image": "assets/onboarding_2.png",
-      "text":
-          "Unique Designs, Cozy Vibes, and Top-Quality Furniture Made For You."
-    },
-    {
-      "image": "assets/onboarding_3.png",
-      "text": "Begin Your Journey Today and Redefine Your Living Space."
-    }
-  ];
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
