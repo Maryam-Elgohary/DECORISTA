@@ -55,6 +55,9 @@ dependencies:
   flutter_paymob_egypt: ^0.0.9
   app_links: ^6.4.0
   equatable: ^2.0.7
+  
+  
+  test: ^1.25.7
 flutter_native_splash:
   color: "#493628"
   image: assets/logo_1.png
@@ -70,7 +73,9 @@ flutter_native_splash:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  test: ^1.24.0
+  mocktail: ^1.0.0
+  bloc_test: ^10.0.0
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
